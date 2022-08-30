@@ -1,0 +1,21 @@
+version: '2.3'
+
+services:
+  prd_<your-product>:
+    image: gennyproject/prd_gennytron:latest
+    container_name: prd_gennytron
+    hostname: prd_gennytron
+    depends_on:
+      gadaq:
+        condition: service_healthy
+    env_file:
+      - ${ENV_FILE}
+    ports:
+      - "${PRD_GENNYTRON_PORT}:${PRD_GENNYTRON_INTERNAL_PORT}"
+    networks:
+      - mainproxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health/ready"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
