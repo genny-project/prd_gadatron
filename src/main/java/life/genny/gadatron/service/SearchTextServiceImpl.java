@@ -1,13 +1,11 @@
 package life.genny.gadatron.service;
 
 import life.genny.gadatron.Constants;
-import life.genny.gadatron.live.data.InternalConsumer;
 import life.genny.gadatron.search.SearchCaching;
 import life.genny.kogito.common.service.SearchService;
 import life.genny.qwandaq.entity.SearchEntity;
 import life.genny.qwandaq.message.QDataAnswerMessage;
 import life.genny.qwandaq.utils.CacheUtils;
-import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -18,8 +16,6 @@ import java.util.List;
 
 @ApplicationScoped
 public class SearchTextServiceImpl implements SearchTextService {
-
-    private static final Logger log = Logger.getLogger(SearchTextServiceImpl.class);
 
     private static Jsonb jsonb = JsonbBuilder.create();
     
@@ -33,14 +29,14 @@ public class SearchTextServiceImpl implements SearchTextService {
         List<SearchEntity> entities = new ArrayList<>();
         PrimarySearchCode code = getSearchTextCode(data);
 
-        if (code.targetCode.contains(Constants.COMPANIES)) {
-            entities.add(caching.getSBECompanies(Constants.COMPANIES + "_" + code.searchText));
-        } else if (code.targetCode.contains(Constants.PERSONS)) {
-            entities.add(caching.getSBEPersons(Constants.PERSONS + "_" + code.searchText));
-        } else if (code.targetCode.contains(Constants.DOCUMENTS)) {
-            entities.add(caching.getSBEDocuments(Constants.DOCUMENTS + "_" + code.searchText));
-        } else if (code.targetCode.contains(Constants.MESSAGES)) {
-            entities.add(caching.getSBEMessages(Constants.MESSAGES + "_" + code.searchText));
+        if (code.targetCode.contains(Constants.SBE_TREE_ITEM_COMPANIES)) {
+            entities.add(caching.getSBECompanies(Constants.SBE_TREE_ITEM_COMPANIES + "_" + code.searchText));
+        } else if (code.targetCode.contains(Constants.SBE_TREE_ITEM_PERSONS)) {
+            entities.add(caching.getSBEPersons(Constants.SBE_TREE_ITEM_PERSONS + "_" + code.searchText));
+        } else if (code.targetCode.contains(Constants.SBE_TREE_ITEM_DOCUMENTS)) {
+            entities.add(caching.getSBEDocuments(Constants.SBE_TREE_ITEM_DOCUMENTS + "_" + code.searchText));
+        } else if (code.targetCode.contains(Constants.SBE_TREE_ITEM_MESSAGES)) {
+            entities.add(caching.getSBEMessages(Constants.SBE_TREE_ITEM_MESSAGES + "_" + code.searchText));
         }
 
         // save to cache

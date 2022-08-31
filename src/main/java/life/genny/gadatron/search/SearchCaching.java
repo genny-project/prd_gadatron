@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import life.genny.gadatron.Constants;
-import life.genny.gadatron.service.SearchTextServiceImpl;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.entity.SearchEntity;
@@ -23,11 +22,10 @@ public class SearchCaching {
 
 		final List<SearchEntity> entities = new ArrayList<>();
 
-		entities.add(getSBECompanies(Constants.COMPANIES));
-
-		entities.add(getSBEPersons(Constants.PERSONS));
-
-		entities.add(getSBEDocuments(Constants.DOCUMENTS));
+		entities.add(getSBECompanies(Constants.SBE_TREE_ITEM_COMPANIES));
+		entities.add(getSBEPersons(Constants.SBE_TREE_ITEM_PERSONS));
+		entities.add(getSBEDocuments(Constants.SBE_TREE_ITEM_DOCUMENTS));
+		entities.add(getSBEMessages(Constants.SBE_TREE_ITEM_MESSAGES));
 
 		// save to cache
 		entities.stream().forEach(e -> {
@@ -37,123 +35,64 @@ public class SearchCaching {
 	}
 
 	public SearchEntity getSBECompanies(final String name){
-		return new SearchEntity(name, "Host Companies")
-				.addSort("PRI_NAME", "NAME", SearchEntity.Sort.ASC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "CPY_%")
-				.addFilter("PRI_IS_HOST_CPY", true)
-				.addColumn("PRI_LOGO", "LOGO")
-				.addColumn("PRI_NAME", "NAME")
-				.addColumn("PRI_CREATED_DATE", "DATE CREATED")
-				.addColumn("PRI_STATUS", "STATUS")
-				.addColumn("PRI_HC_VALIDATION_DOC_URL", "VALIDATION")
-				.addColumn("PRI_PHONE", "PHONE")
-				.addColumn("PRI_ADDRESS_FULL", "ADDRESS")
-				.addColumn("PRI_ADDRESS_STATE", "STATE")
-				.addColumn("PRI_ADDRESS_COUNTRY", "COUNTRY")
-				.addColumn("PRI_ABN", "ABN")
-				.addColumn("PRI_LEGAL_NAME", "LEGAL NAME")
-				.addColumn("PRI_WEBSITE", "WEBSITE")
-				.addColumn("PRI_LINKEDIN_URL", "LINKEDIN")
-				.addColumn("LNK_COMPANY_INDUSTRY", "COMPANY INDUSTRY")
-				.addColumn("LNK_NUMBER_STAFF", "NUMBER OF STAFF")
-				.addColumn("PRI_COMPANY_DESCRIPTION", "COMPANY DESCRIPTION")
+		return new SearchEntity(name, "Companies")
+				.addSort(Constants.PRI_NAME, "NAME", SearchEntity.Sort.ASC)
+				.addFilter(Constants.PRI_CODE, SearchEntity.StringFilter.LIKE, "CPY_%")
+				.addColumn(Constants.PRI_LOGO, "LOGO")
+				.addColumn(Constants.PRI_NAME, "NAME")
+				.addColumn(Constants.PRI_CREATED_DATE, "DATE CREATED")
+				.addColumn(Constants.PRI_STATUS, "STATUS")
+				.addColumn(Constants.PRI_HC_VALIDATION_DOC_URL, "VALIDATION")
+				.addColumn(Constants.PRI_PHONE, "PHONE")
+				.addColumn(Constants.PRI_ADDRESS_FULL, "ADDRESS")
+				.addColumn(Constants.PRI_ADDRESS_STATE, "STATE")
+				.addColumn(Constants.PRI_ADDRESS_COUNTRY, "COUNTRY")
+				.addColumn(Constants.PRI_ABN, "ABN")
+				.addColumn(Constants.PRI_LEGAL_NAME, "LEGAL NAME")
+				.addColumn(Constants.PRI_WEBSITE, "WEBSITE")
+				.addColumn(Constants.PRI_LINKEDIN_URL, "LINKEDIN")
+				.addColumn(Constants.LNK_COMPANY_INDUSTRY, "COMPANY INDUSTRY")
+				.addColumn(Constants.LNK_NUMBER_STAFF, "NUMBER OF STAFF")
+				.addColumn(Constants.PRI_COMPANY_DESCRIPTION, "COMPANY DESCRIPTION")
 				.setPageSize(20)
 				.setPageStart(0);
 	}
 
 	public SearchEntity getSBEDocuments(String name){
-		return new SearchEntity(name, "Docments")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "CPY_%")
-				.addFilter("PRI_IS_INTERNSHIP", true)
-				.addColumn("PRI_COMPANY_LOGO", "COMPANY LOGO")
-				.addColumn("PRI_TITLE", "TITLE")
-				.addColumn("PRI_CREATED_DATE", "DATE CREATED")
-				.addColumn("PRI_STATUS", "STATUS")
-				.addColumn("PRI_LEGAL_NAME", "HOST COMPANY")
-				.addColumn("PRI_ADDRESS_FULL", "ADDRESS")
-				.addColumn("PRI_ADDRESS_STATE", "STATE")
-				.addColumn("PRI_ADDRESS_COUNTRY", "COUNTRY")
-				.addColumn("PRI_START_DATE", "PROPOSED START DATE")
-				.addColumn("LNK_COMPANY_INDUSTRY", "INDUSTRY")
-				.addColumn("PRI_ASSOC_NO_OF_INTERNS", "NUMBER OF ALLOWED INTERNS")
-				.addColumn("PRI_SOFTWARE", "SOFTWARE")
-				.addColumn("PRI_WORKSITE", "WORKSITE")
-				.addColumn("PRI_SPECIALISATION", "SPECIALISATION")
-				.addColumn("PRI_ROLES_AND_RESPONSIBILITIES", "ROLES AND RESPONSIBILITIES")
-				.addColumn("PRI_BASE_LEARNING_OUTCOMES", "BASE LEARNING OUTCOMES")
-				.addColumn("PRI_BASE_LEARNING_OUTCOMES", "TECHNICAL SKILLS LEARNING OUTCOMES")
-				.addColumn("PRI_WHICH_DAYS_STRIPPED", "WHICH DAYS")
-				.addColumn("PRI_NO_OF_INTERNS", "NO OF INTERNS")
-				.addColumn("PRI_INTRO_VIDEO", "VIDEO")
+		return new SearchEntity(name, "Documents")
+				.addSort(Constants.PRI_CREATED, Constants.CREATED, SearchEntity.Sort.DESC)
 				.setPageSize(20)
 				.setPageStart(0);
 	}
 
 	public SearchEntity getSBEPersons(final String name){
 		return new SearchEntity(name, "Persons")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_IS_INTERN", true)
-				.addColumn("LNK_PERSON", "PERSON")
-				.addColumn("PRI_PROFILE_PICTURE", "PROFILE PICTURE")
-				.addColumn("PRI_NAME", "NAME")
-				.addColumn("PRI_CREATED_DATE", "DATE CREATED")
-				.addColumn("PRI_PREFERRED_NAME", "PREFERRED NAME")
-				.addColumn("PRI_STATUS", "STATUS")
-				.addColumn("PRI_IS_PROFILE_COMPLETED", "PROFILE STATUS")
-				.addColumn("PRI_INDUSTRY", "INDUSTRY")
-				.addColumn("PRI_OCCUPATION", "OCCUPATION")
-				.addColumn("PRI_EDU_PROVIDER_NAME", "EDUCATION PROVIDER")
-				.addColumn("PRI_INTERNSHIP_DURATION", "INTERNSHIP DURATION")
-				.addColumn("PRI_DAYS_PER_WEEK", "DAYS PER WEEK")
-				.addColumn("PRI_EMAIL", "EMAIL")
-				.addColumn("PRI_MOBILE", "MOBILE")
-				.addColumn("PRI_AGENT_NAME", "AGENT NAME")
-				.addColumn("PRI_ASSOC_AGENCY", "ASSOC AGENCY")
-				.addColumn("PRI_START_DATE", "START DATE")
-				.addColumn("PRI_ADDRESS_SUBURB", "SUBURB")
-				.addColumn("PRI_ADDRESS_STATE", "STATE")
-				.addColumn("PRI_ADDRESS_COUNTRY", "COUNTRY")
-				.addColumn("PRI_VIDEO_URL", "VIDEO URL")
-				.addColumn("PRI_PERCENTAGE_JOURNALS", "COMPLETED JOURNALS")
-				.addColumn("PRI_IS_EDU_PROVIDER_ACADEMY", "ACADEMY")
-				.addColumn("PRI_INTERN_STUDENT_ID", "STUDENT ID")
-				.addColumn("PRI_UPDATE_LINKEDIN", "LINKEDIN URL")
+				.addSort(Constants.PRI_CREATED, Constants.CREATED, SearchEntity.Sort.DESC)
+				.addFilter(Constants.PRI_CODE, SearchEntity.StringFilter.LIKE, "PER_%")
+				.addFilter(Constants.PRI_IS_INTERN, true)
+				.addColumn(Constants.LNK_PERSON, "PERSON")
+				.addColumn(Constants.PRI_PROFILE_PICTURE, "PROFILE PICTURE")
+				.addColumn(Constants.PRI_NAME, "NAME")
+				.addColumn(Constants.PRI_CREATED_DATE, "DATE CREATED")
+				.addColumn(Constants.PRI_PREFERRED_NAME, "PREFERRED NAME")
+				.addColumn(Constants.PRI_STATUS, "STATUS")
+				.addColumn(Constants.PRI_IS_PROFILE_COMPLETED, "PROFILE STATUS")
+				.addColumn(Constants.PRI_INDUSTRY, "INDUSTRY")
+				.addColumn(Constants.PRI_OCCUPATION, "OCCUPATION")
+				.addColumn(Constants.PRI_EMAIL, "EMAIL")
+				.addColumn(Constants.PRI_MOBILE, "MOBILE")
+				.addColumn(Constants.PRI_ADDRESS_SUBURB, "SUBURB")
+				.addColumn(Constants.PRI_ADDRESS_STATE, "STATE")
+				.addColumn(Constants.PRI_ADDRESS_COUNTRY, "COUNTRY")
+				.addColumn(Constants.PRI_VIDEO_URL, "VIDEO URL")
+				.addColumn(Constants.PRI_UPDATE_LINKEDIN, "LINKEDIN URL")
 				.setPageSize(20)
 				.setPageStart(0);
 	}
 
 	public SearchEntity getSBEMessages(final String name){
 		return new SearchEntity(name, "Messages")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_IS_INTERN", true)
-				.addColumn("LNK_PERSON", "PERSON")
-				.addColumn("PRI_PROFILE_PICTURE", "PROFILE PICTURE")
-				.addColumn("PRI_NAME", "NAME")
-				.addColumn("PRI_CREATED_DATE", "DATE CREATED")
-				.addColumn("PRI_PREFERRED_NAME", "PREFERRED NAME")
-				.addColumn("PRI_STATUS", "STATUS")
-				.addColumn("PRI_IS_PROFILE_COMPLETED", "PROFILE STATUS")
-				.addColumn("PRI_INDUSTRY", "INDUSTRY")
-				.addColumn("PRI_OCCUPATION", "OCCUPATION")
-				.addColumn("PRI_EDU_PROVIDER_NAME", "EDUCATION PROVIDER")
-				.addColumn("PRI_INTERNSHIP_DURATION", "INTERNSHIP DURATION")
-				.addColumn("PRI_DAYS_PER_WEEK", "DAYS PER WEEK")
-				.addColumn("PRI_EMAIL", "EMAIL")
-				.addColumn("PRI_MOBILE", "MOBILE")
-				.addColumn("PRI_AGENT_NAME", "AGENT NAME")
-				.addColumn("PRI_ASSOC_AGENCY", "ASSOC AGENCY")
-				.addColumn("PRI_START_DATE", "START DATE")
-				.addColumn("PRI_ADDRESS_SUBURB", "SUBURB")
-				.addColumn("PRI_ADDRESS_STATE", "STATE")
-				.addColumn("PRI_ADDRESS_COUNTRY", "COUNTRY")
-				.addColumn("PRI_VIDEO_URL", "VIDEO URL")
-				.addColumn("PRI_PERCENTAGE_JOURNALS", "COMPLETED JOURNALS")
-				.addColumn("PRI_IS_EDU_PROVIDER_ACADEMY", "ACADEMY")
-				.addColumn("PRI_INTERN_STUDENT_ID", "STUDENT ID")
-				.addColumn("PRI_UPDATE_LINKEDIN", "LINKEDIN URL")
+				.addSort(Constants.PRI_CREATED, Constants.CREATED, SearchEntity.Sort.DESC)
 				.setPageSize(20)
 				.setPageStart(0);
 	}

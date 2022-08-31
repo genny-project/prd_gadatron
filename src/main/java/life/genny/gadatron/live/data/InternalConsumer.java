@@ -63,7 +63,6 @@ public class InternalConsumer {
 		service.fullServiceInit();
 		kogitoUtils.initDataByRuleGroup("sidebar");
 		kogitoUtils.initDataByRuleGroup("bucket");
-//		kogitoUtils.initDataByRuleGroup("Summary");
 	}
 
 	/**

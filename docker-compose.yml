@@ -2,16 +2,16 @@ version: '2.3'
 
 services:
   prd_<your-product>:
-    image: gennyproject/prd_gennytron:latest
-    container_name: prd_gennytron
-    hostname: prd_gennytron
+    image: gennyproject/prd_gadatron:latest
+    container_name: prd_gadatron
+    hostname: prd_gadatron
     depends_on:
       gadaq:
         condition: service_healthy
     env_file:
       - ${ENV_FILE}
     ports:
-      - "${PRD_GENNYTRON_PORT}:${PRD_GENNYTRON_INTERNAL_PORT}"
+      - "${PRD_GADATRON_PORT}:${PRD_GADATRON_INTERNAL_PORT}"
     networks:
       - mainproxy
     healthcheck:
