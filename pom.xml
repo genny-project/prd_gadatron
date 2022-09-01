@@ -5,8 +5,27 @@
   <groupId>life.genny</groupId>
   <artifactId>prd_gadatron</artifactId>
   <version>10.1.0</version>
+  <name>Gadatron Kogito Service</name>
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <deploy-plugin.version>3.0.0-M2</deploy-plugin.version>
+    <enforcer-plugin.version>3.0.0</enforcer-plugin.version>
+    <genny.version>${project.version}</genny.version>
+    <jar-plugin.version>3.2.2</jar-plugin.version>
+    <kogito.version>1.26.0.Final</kogito.version>
+    <maven.compiler.parameters>true</maven.compiler.parameters>
+    <maven.compiler.release>11</maven.compiler.release>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.version>3.8.1</maven.compiler.version>
+    <maven.version>3.8.1</maven.version>
+    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+    <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+    <quarkus.platform.version>2.11.3.Final</quarkus.platform.version>
+    <source-plugin.version>3.2.0</source-plugin.version>
+    <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
+    <version.compiler.plugin>3.0.0-M5</version.compiler.plugin>
+    <version.org.optaplanner>8.26.0.Final</version.org.optaplanner>
+    <!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
@@ -26,7 +45,7 @@
     <version.compiler.plugin>3.0.0-M7</version.compiler.plugin>
     <genny.version>${project.version}</genny.version>
     <kogito.version>1.26.0.Final</kogito.version>
-    <version.org.optaplanner>8.26.0.Final</version.org.optaplanner>
+    <version.org.optaplanner>8.26.0.Final</version.org.optaplanner> -->
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -40,6 +59,20 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>life.genny</groupId>
+      <artifactId>kogito-common</artifactId>
+      <version>${genny.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.kogito</groupId>
+      <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
+      <version>${kogito.version}</version>
+    </dependency>
     <dependency>
       <groupId>life.genny</groupId>
       <artifactId>gadaq</artifactId>
@@ -65,8 +98,6 @@
       <version>1.18.24</version>
       <scope>provided</scope>
     </dependency>
-
-
   </dependencies>
   <build>
     <plugins>
@@ -169,11 +200,6 @@
           </execution>
         </executions>
       </plugin>
-        <plugin>
-          <groupId>org.kie.kogito</groupId>
-          <artifactId>kogito-maven-plugin</artifactId>
-          <version>${kogito.version}</version>
-        </plugin>
     </plugins>
   </build>
 </project>

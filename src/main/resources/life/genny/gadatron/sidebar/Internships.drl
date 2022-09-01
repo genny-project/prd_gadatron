@@ -1,0 +1,83 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+import life.genny.qwandaq.attribute.AttributeInteger;
+
+rule "SBE_INTERNSHIPS"
+	ruleflow-group 'sidebar'
+	no-loop true
+	when
+		not  SearchEntity (code == "SBE_INTERNSHIPS")
+		userToken : UserToken()
+	then
+		System.out.println("Generate " + drools.getRule().getName());
+
+		SearchEntity searchBE = new SearchEntity("SBE_INTERNSHIPS", "Internships")
+			/* Sorts */
+			.addSort("PRI_CREATED", "Date Created", SearchEntity.Sort.DESC)
+			.addSort("PRI_STATUS","Status",SearchEntity.Sort.ASC) 
+			/* .addSort("PRI_ASSOC_INDUSTRY","Industry",SearchEntity.Sort.ASC) */
+			/* .addSort("PRI_ASSOC_HC","Host Company",SearchEntity.Sort.ASC) */
+			/* .addSort("PRI_INTERNSHIP_START_DATE","Start Date",SearchEntity.Sort.ASC) */
+
+			/* Filters */
+			.addFilter("PRI_IS_INTERNSHIP", true)
+			.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "BEG_%")
+			/*.addFilter("PRI_STATUS", SearchEntity.StringFilter.LIKE, "ACTIVE")*/
+			/* Table Columns */
+			.addColumn("PRI_IMAGE_URL", "Company Logo")
+			.addColumn("PRI_NAME", "Title")
+			/*.addColumn("PRI_INTERNSHIP_TITLE", "Title")*/
+			.addColumn("PRI_CREATED", "Date Created")
+			.addColumn("PRI_STATUS", "Status")
+			/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+			.addAssociatedColumn("LNK_HOST_COMPANY", "PRI_NAME", "Host Company")
+			.addColumn("PRI_ADDRESS_FULL", "Address")
+			.addColumn("PRI_ADDRESS_STATE", "State")
+			.addColumn("PRI_ADDRESS_COUNTRY", "Country")
+			.addColumn("PRI_INTERNSHIP_START_DATE", "Proposed Start Date")
+			.addColumn("PRI_ASSOC_INDUSTRY", "Industry")
+			.addColumn("PRI_NO_OF_INTERNS", "Number of allowed Interns")
+			.addAssociatedColumn("LNK_SOFTWARE", "PRI_NAME", "Software")
+			.addAssociatedColumn("LNK_WORKSITE_SELECT", "PRI_NAME", "Worksite")
+			.addColumn("PRI_ASSOC_OCCUPATION", "Specialisation")
+
+			/* Filterable Columns */
+			.addFilterableColumn("PRI_NAME", "Title")
+			.addFilterableColumn("PRI_STATUS", "Status")
+			.addFilterableColumn("PRI_ASSOC_INDUSTRY", "Industry")
+			.addFilterableColumn("PRI_ASSOC_HC", "Host Company")
+			.addFilterableColumn("PRI_ADDRESS_STATE", "State")
+			.addFilterableColumn("PRI_ADDRESS_COUNTRY", "Country")
+			.addFilterableColumn("PRI_CREATED_DATE", "Date Created")
+
+			/* Wildcard blacklist */
+			/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+			/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+			/* Wildcard Whitelisted Attributes */
+			.addWhitelist("PRI_NAME")
+			/* .addWhitelist("PRI_ASSOC_HC") */
+			.setWildcardDepth(1)
+
+			/* Row Actions */
+			.addAction("PRI_EVENT_VIEW", "View")
+
+			/* Table Actions */
+			.addSearchAction("PRI_EVENT_MAP_VIEW", "Map View")
+
+			.setPageStart(0).setPageSize(30);
+
+        AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+        searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end

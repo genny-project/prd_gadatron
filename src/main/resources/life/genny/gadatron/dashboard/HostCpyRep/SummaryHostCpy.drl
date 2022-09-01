@@ -1,0 +1,42 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+
+
+rule "SBE_SUMMARY_HOST_CPY"
+   ruleflow-group 'Summary'
+   no-loop true
+   when
+      not  SearchEntity (code == "SBE_SUMMARY_HOST_CPY")
+      userToken : UserToken()
+   then
+      System.out.println(" Generate "+drools.getRule().getName() );
+
+      SearchEntity searchBE = new SearchEntity("SBE_SUMMARY_HOST_CPY", "My Company")
+                              /* .addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "CPY_%") */
+                     			.addFilter("PRI_IS_HOST_CPY", true)
+                              
+                              /* Columns */
+                     		  .addColumn("PRI_COMPANY_DESCRIPTION", "Details")
+                              .addColumn("PRI_VALIDATION", "Validation")
+                              .addColumn("PRI_OHS_DOC", "Download OH&S Declaration")
+		                      .addColumn("PRI_TC_DOC", "Download Terms and Conditions Document")
+
+                              /* Validation Attribute */
+                              .setValidationAttribute("PRI_VALIDATION")
+                              
+                              
+                              /* Display Mode */
+                              .setDisplayMode("my_company")
+                              .setPageStart(0).setPageSize(1);
+
+        searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end

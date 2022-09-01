@@ -1,0 +1,51 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+
+rule "SBE_SUMMARY_INPROGRESS_APPLICATION"
+   ruleflow-group 'Summary'
+   no-loop true
+   when
+      not  SearchEntity (code == "SBE_SUMMARY_INPROGRESS_APPLICATION")
+      userToken : UserToken()
+   then
+      System.out.println(" Generate "+drools.getRule().getName() );
+
+      SearchEntity searchBE = new SearchEntity("SBE_SUMMARY_INPROGRESS_APPLICATION", "My Internship")
+                              .addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
+
+                              .addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "APP_%")
+                              .addFilter("PRI_STATUS", SearchEntity.StringFilter.EQUAL, "PROGRESS")
+                              .addFilter("PRI_DISABLED", false)
+
+                              /* Columns */
+                              .addColumn("PRI_TITLE", "Internship")
+                              .addColumn("PRI_ASSOC_HC", "Host Company")
+                              .addColumn("PRI_ROLES_AND_RESPONSIBILITIES", "Roles and Responsibilities")
+                              .addColumn("PRI_BASE_LEARNING_OUTCOMES", "Learning Outcomes")
+                              .addColumn("PRI_SPECIFIC_LEARNING_OUTCOMES", "Specific Learning Outcomes")
+                              .addColumn("PRI_START_DATE", "Internship Start Date")
+                              .addColumn("PRI_END_DATE", "Internship End Date")
+                              .addColumn("PRI_ASSOC_DURATION", "Internship Duration")
+                              .addColumn("PRI_DAYS_PER_WEEK", "Number of Days per week")
+                              .addColumn("PRI_PROGRESS", "Application Progress")
+
+                              /* Nested Search */
+
+                              /* Actions */
+                              .addDefaultAction("PRI_EVENT_VIEW_APPLICATION", "View")
+                              
+                              /* Display Mode */
+                              .setDisplayMode("my_internship")
+                              .setPageStart(0).setPageSize(5);
+
+        searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end

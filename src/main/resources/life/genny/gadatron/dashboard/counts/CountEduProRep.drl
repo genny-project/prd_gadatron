@@ -1,0 +1,38 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+
+rule "SBE_COUNTS_EDU_PRO_REP"
+   ruleflow-group 'Summary'
+   no-loop true
+   when
+      not  SearchEntity (code == "SBE_COUNTS_EDU_PRO_REP")
+      userToken : UserToken()
+   then
+     	System.out.println(" Generate "+drools.getRule().getName() );
+
+        SearchEntity searchBE = new SearchEntity("SBE_COUNTS_EDU_PRO_REP", "Student Data")
+							  .addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "DUMMY")
+
+							  .addLinkedSearch("CNS_SBE_COUNT_TOTAL_INTERNS", "Total Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_AVAILABLE_INTERNS", "Available Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_SHORTLISTED_INTERNS", "Shortlisted Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_INTERVIEWED_INTERNS", "Interviewing  Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_OFFERED_INTERNS", "Offered Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_PLACED_INTERNS", "Placed Interns")
+							  .addLinkedSearch("CNS_SBE_COUNT_PROGRESS_INTERNS", "In Progress Interns")
+                              
+                              /* Display Mode */
+                              .setDisplayMode("nested_summary_pane")
+                              .setPageStart(0).setPageSize(1);
+
+        searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end

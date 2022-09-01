@@ -1,0 +1,45 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+
+rule "SBE_SUMMARY_AGENTS"
+   ruleflow-group 'Summary'
+   no-loop true
+   when
+      not  SearchEntity (code == "SBE_SUMMARY_AGENTS")
+      userToken : UserToken()
+   then
+     	System.out.println("   Generate "+drools.getRule().getName() );
+
+        SearchEntity searchBE =  new SearchEntity("SBE_SUMMARY_AGENTS", "Our Agents")
+                              .addSort("PRI_NAME","Name",SearchEntity.Sort.ASC)
+                              .addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
+                              .addFilter("PRI_IS_AGENT", true)
+
+                              /* Columns */
+                              .addColumn("PRI_STATUS", "Status")
+                              .addColumn("PRI_NAME", "Name")
+                              .addColumn("PRI_EMAIL", "Email")
+                              .addColumn("PRI_MOBILE", "Mobile")
+                              .addColumn("PRI_ADDRESS_FULL", "Address")
+                     			.addColumn("PRI_IMAGE_URL", " ")
+                              
+                              /* Actions */
+                     			.addAction("PRI_EVENT_VIEW", "View")
+                              .addSearchAction("PRI_EVENT_QUE_AGENT_MENU", "Add")
+                     			.addSearchAction("PRI_EVENT_QUE_TREE_ITEM_AGENTS", "View")
+                              
+                              /* Display Mode */
+                              .setDisplayMode("agents")
+                              .setPageStart(0).setPageSize(10);
+
+        searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end

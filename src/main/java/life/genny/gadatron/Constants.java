@@ -64,4 +64,5 @@ public class Constants {
     public static final String SBE_EMAIL = "SBE_EMAIL";
     public static final String PRI_RECIPIENT_LNK = "PRI_RECIPIENT_LNK";
     public static final String PRI_MILESTONE = "PRI_MILESTONE";
+    public static final String LNK_COREBE = "LNK_COREBE";
 }

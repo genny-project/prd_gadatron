@@ -1,0 +1,34 @@
+package life.genny.rules;
+
+import java.util.List;
+import java.util.ArrayList;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.models.GennySettings;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.message.QEventMessage;
+
+rule "SBE_DOCUMENTS_GRP"
+	ruleflow-group 'sidebar'
+	no-loop true
+	when
+		not  SearchEntity (code == "SBE_DOCUMENTS_GRP")
+		userToken : UserToken()
+	then
+		System.out.println("   Generate "+drools.getRule().getName() );
+
+		SearchEntity searchBE = new SearchEntity(drools.getRule().getName(), "Documents")
+			//.addSort("PRI_LEGAL_NAME", "Legal Name", SearchEntity.Sort.ASC)
+			//.addSort("PRI_NAME", "Name", SearchEntity.Sort.ASC) // not working
+			.addFilter("PRI_CODE",SearchEntity.StringFilter.LIKE,"DOC_%")
+			//.addColumn("PRI_NAME", "Name") //not working
+			//.addColumn("PRI_LEGAL_NAME", "Legal Name")
+			//.addAssociatedColumn("LNK_SIGNEE", "PRI_NAME", "Signee")
+            .addAction("EDIT", "Edit")
+			.setPageStart(0)
+			.setPageSize(10000);
+
+		searchBE.setRealm(userToken.getRealm());
+        CacheUtils.putObject(userToken.getRealm(), searchBE.getCode(), searchBE);
+
+end
