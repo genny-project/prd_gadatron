@@ -1,0 +1,19 @@
+package life.genny.gadatron.inference;
+
+import life.genny.qwandaq.message.QDataAnswerMessage;
+import life.genny.qwandaq.utils.KafkaUtils;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.kogito.common.utils.KogitoUtils;
+
+ruleflow-group 'Inference'
+
+rule InferName 
+when
+	msg: QDataAnswerMessage()
+	userToken: UserToken()
+	kogitoUtils : KogitoUtils()
+then
+    /* do some inferrence stuff idk */
+	System.out.println("Inferring!");
+	retract(msg);
+end

@@ -21,7 +21,7 @@
   <bpmn2:collaboration id="_1C5AC4D4-BDE8-4949-8441-CFCBE09CB63A" name="Default Collaboration">
     <bpmn2:participant id="_8681AA77-D972-48B4-BA62-C79222F31A56" name="Pool Participant" processRef="adminLifecycle"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="adminLifecycle" drools:packageName="life.genny.gadatron" drools:version="1.0" drools:adHoc="false" name="AdminLifecyle" isExecutable="true" processType="Public">
+  <bpmn2:process id="adminLifecycle" drools:packageName="life.genny.gadatron.application" drools:version="1.0" drools:adHoc="false" name="AdminLifecyle" isExecutable="true" processType="Public">
     <bpmn2:property id="entityCode" itemSubjectRef="_entityCodeItem" name="entityCode">
       <bpmn2:extensionElements>
         <drools:metaData name="customTags">

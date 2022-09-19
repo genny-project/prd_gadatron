@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns:xsi="xsi" id="_bNIE4AwNEDuWlvFfX6z6zA" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns:xsi="xsi" id="_St3ywAsfEDuKf4dCngUZfg" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
   <bpmn2:itemDefinition id="_questionCodeItem" structureRef="String"/>
   <bpmn2:itemDefinition id="_sourceCodeItem" structureRef="String"/>
   <bpmn2:itemDefinition id="_targetCodeItem" structureRef="String"/>
@@ -10,8 +10,8 @@
   <bpmn2:itemDefinition id="_timerDataItem" structureRef="life.genny.kogito.common.models.TimerData"/>
   <bpmn2:itemDefinition id="__C462D763-02CE-45D3-83B8-84A267693D7F_eventOutputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
   <bpmn2:itemDefinition id="end_process_questionsType" structureRef="life.genny.kogito.common.models.S2SData"/>
-  <bpmn2:itemDefinition id="_CC0A4288-4774-4B62-8328-50E075EFD604" structureRef=""/>
-  <bpmn2:itemDefinition id="_9E876047-C611-480B-9B7E-8E79E06598A4" structureRef=""/>
+  <bpmn2:itemDefinition id="_C2D037D3-C9EA-4842-8868-AA65C788C2F8" structureRef=""/>
+  <bpmn2:itemDefinition id="_B64A424A-5FAD-4A37-AD5F-9DF9043C2B21" structureRef=""/>
   <bpmn2:itemDefinition id="__7D8FEF11-05A0-48C9-A453-D23087AC2997_eventInputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
   <bpmn2:itemDefinition id="start_process_questionsType" structureRef="life.genny.kogito.common.models.S2SData"/>
   <bpmn2:itemDefinition id="__7155A1B8-A898-4080-A64F-320F63B7A710_dataInputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
@@ -19,25 +19,25 @@
   <bpmn2:itemDefinition id="__A2F1D0B6-E3B3-4E38-A391-EF950AFEAAE6_dataInputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
   <bpmn2:itemDefinition id="__5E9A7B47-C0D3-4B51-81F4-CD2B9017EFA3_eventOutputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
   <bpmn2:itemDefinition id="abort_process_questionsType" structureRef="life.genny.kogito.common.models.S2SData"/>
-  <bpmn2:itemDefinition id="_60E164CD-AF9D-4C12-8CA8-8EAA73341BEB" structureRef=""/>
-  <bpmn2:itemDefinition id="_6542E0A6-3407-484B-A420-7BF761E47E44" structureRef=""/>
+  <bpmn2:itemDefinition id="_6E9FDB5E-6388-40A0-B510-8C6C40DA780B" structureRef=""/>
+  <bpmn2:itemDefinition id="_9F95E243-2E93-4C6C-B766-F57263EC4020" structureRef=""/>
   <bpmn2:itemDefinition id="__6A9F27A5-5A22-45C2-A35C-1D4907866C6D_dataInputXItem" structureRef="life.genny.kogito.common.models.S2SData"/>
-  <bpmn2:message id="_bNJTAAwNEDuWlvFfX6z6zA" itemRef="end_process_questionsType" name="end_process_questions"/>
-  <bpmn2:message id="_bNJTAQwNEDuWlvFfX6z6zA" itemRef="start_process_questionsType" name="start_process_questions"/>
+  <bpmn2:message id="_St9SUAsfEDuKf4dCngUZfg" itemRef="end_process_questionsType" name="end_process_questions"/>
+  <bpmn2:message id="_St95YAsfEDuKf4dCngUZfg" itemRef="start_process_questionsType" name="start_process_questions"/>
   <bpmn2:interface id="_7155A1B8-A898-4080-A64F-320F63B7A710_ServiceInterface" name="life.genny.kogito.common.service.Service2Service" implementationRef="life.genny.kogito.common.service.Service2Service">
     <bpmn2:operation id="_7155A1B8-A898-4080-A64F-320F63B7A710_ServiceOperation" name="addToken" implementationRef="addToken"/>
   </bpmn2:interface>
   <bpmn2:interface id="_A2F1D0B6-E3B3-4E38-A391-EF950AFEAAE6_ServiceInterface" name="life.genny.kogito.common.service.Service2Service" implementationRef="life.genny.kogito.common.service.Service2Service">
     <bpmn2:operation id="_A2F1D0B6-E3B3-4E38-A391-EF950AFEAAE6_ServiceOperation" name="initialiseScope" implementationRef="initialiseScope"/>
   </bpmn2:interface>
-  <bpmn2:message id="_bNJTAgwNEDuWlvFfX6z6zA" itemRef="abort_process_questionsType" name="abort_process_questions"/>
+  <bpmn2:message id="_St-gcAsfEDuKf4dCngUZfg" itemRef="abort_process_questionsType" name="abort_process_questions"/>
   <bpmn2:interface id="_6A9F27A5-5A22-45C2-A35C-1D4907866C6D_ServiceInterface" name="life.genny.kogito.common.service.Service2Service" implementationRef="life.genny.kogito.common.service.Service2Service">
     <bpmn2:operation id="_6A9F27A5-5A22-45C2-A35C-1D4907866C6D_ServiceOperation" name="initialiseScope" implementationRef="initialiseScope"/>
   </bpmn2:interface>
-  <bpmn2:collaboration id="_DEC9AB77-5D7D-4779-B90A-00033B04F3BC" name="Default Collaboration">
-    <bpmn2:participant id="_DB13F73D-87B4-42EA-A834-FFF8C6E879C1" name="Pool Participant" processRef="callProcessQuestions"/>
+  <bpmn2:collaboration id="_5737C168-2E3B-4299-91E7-78E42563AE35" name="Default Collaboration">
+    <bpmn2:participant id="_9C6713B3-81CA-4F57-8D1F-3E6CD966BEC1" name="Pool Participant" processRef="callProcessQuestions"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="callProcessQuestions" drools:packageName="life.genny.gadatron" drools:version="1.0" drools:adHoc="false" name="CallProcessQuestions" isExecutable="true" processType="Public">
+  <bpmn2:process id="callProcessQuestions" drools:packageName="life.genny.gadatron.application" drools:version="1.0" drools:adHoc="false" name="CallProcessQuestions" isExecutable="true" processType="Public">
     <bpmn2:documentation><![CDATA[Call the ProcessQuestions workflow from another service]]></bpmn2:documentation>
     <bpmn2:property id="questionCode" itemSubjectRef="_questionCodeItem" name="questionCode"/>
     <bpmn2:property id="sourceCode" itemSubjectRef="_sourceCodeItem" name="sourceCode"/>
@@ -116,7 +116,7 @@
       <bpmn2:outputSet>
         <bpmn2:dataOutputRefs>_5E9A7B47-C0D3-4B51-81F4-CD2B9017EFA3_eventOutputX</bpmn2:dataOutputRefs>
       </bpmn2:outputSet>
-      <bpmn2:messageEventDefinition drools:msgref="abort_process_questions" messageRef="_bNJTAgwNEDuWlvFfX6z6zA"/>
+      <bpmn2:messageEventDefinition drools:msgref="abort_process_questions" messageRef="_St-gcAsfEDuKf4dCngUZfg"/>
     </bpmn2:intermediateCatchEvent>
     <bpmn2:eventBasedGateway id="_4BF7AA5E-C4EA-49B0-833F-00ED4081066C" gatewayDirection="Diverging">
       <bpmn2:incoming>_E17F34DF-8FF8-4949-ACBB-E11DA87BAB4A</bpmn2:incoming>
@@ -200,7 +200,7 @@ System.out.println("CallProcessQuestions:aborted="+data.getAbortReason());</bpmn
       <bpmn2:script>System.out.println("Entering CallProcessQuestions");
 
 data = new life.genny.kogito.common.models.S2SData();
-
+data.setProductCode("gadatron");
 data.setQuestionCode(questionCode);
 data.setSourceCode(sourceCode);
 data.setTargetCode(targetCode);
@@ -224,7 +224,7 @@ kcontext.setVariable("data", data);</bpmn2:script>
       <bpmn2:inputSet>
         <bpmn2:dataInputRefs>_7D8FEF11-05A0-48C9-A453-D23087AC2997_eventInputX</bpmn2:dataInputRefs>
       </bpmn2:inputSet>
-      <bpmn2:messageEventDefinition drools:msgref="start_process_questions" messageRef="_bNJTAQwNEDuWlvFfX6z6zA"/>
+      <bpmn2:messageEventDefinition drools:msgref="start_process_questions" messageRef="_St95YAsfEDuKf4dCngUZfg"/>
     </bpmn2:intermediateThrowEvent>
     <bpmn2:intermediateCatchEvent id="_C462D763-02CE-45D3-83B8-84A267693D7F" name="Submitted">
       <bpmn2:extensionElements>
@@ -242,7 +242,7 @@ kcontext.setVariable("data", data);</bpmn2:script>
       <bpmn2:outputSet>
         <bpmn2:dataOutputRefs>_C462D763-02CE-45D3-83B8-84A267693D7F_eventOutputX</bpmn2:dataOutputRefs>
       </bpmn2:outputSet>
-      <bpmn2:messageEventDefinition drools:msgref="end_process_questions" messageRef="_bNJTAAwNEDuWlvFfX6z6zA"/>
+      <bpmn2:messageEventDefinition drools:msgref="end_process_questions" messageRef="_St9SUAsfEDuKf4dCngUZfg"/>
     </bpmn2:intermediateCatchEvent>
     <bpmn2:endEvent id="_313818B4-F36E-4F3C-8FF1-3298360B2695" name="Data Submitted">
       <bpmn2:extensionElements>
@@ -270,7 +270,7 @@ kcontext.setVariable("data", data);</bpmn2:script>
         <dc:Bounds height="56" width="56" x="1535" y="149"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__C462D763-02CE-45D3-83B8-84A267693D7F" bpmnElement="_C462D763-02CE-45D3-83B8-84A267693D7F">
-        <dc:Bounds height="56" width="56" x="881" y="149"/>
+        <dc:Bounds height="56" width="56" x="882" y="149"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="shape__7D8FEF11-05A0-48C9-A453-D23087AC2997" bpmnElement="_7D8FEF11-05A0-48C9-A453-D23087AC2997">
         <dc:Bounds height="56" width="56" x="649" y="149"/>
@@ -312,10 +312,10 @@ kcontext.setVariable("data", data);</bpmn2:script>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape__4BF7AA5E-C4EA-49B0-833F-00ED4081066C_to_shape__C462D763-02CE-45D3-83B8-84A267693D7F" bpmnElement="_5B0A952F-FC09-4199-9B43-A803B42A2EA0">
         <di:waypoint x="790" y="177"/>
-        <di:waypoint x="881" y="177"/>
+        <di:waypoint x="882" y="177"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape__C462D763-02CE-45D3-83B8-84A267693D7F_to_shape__931E1007-10AB-4B65-B36E-B10883224FBE" bpmnElement="_6328CD06-22F7-41AB-9509-852958417FCA">
-        <di:waypoint x="909" y="177"/>
+        <di:waypoint x="910" y="177"/>
         <di:waypoint x="999" y="177"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape__7155A1B8-A898-4080-A64F-320F63B7A710_to_shape__7D8FEF11-05A0-48C9-A453-D23087AC2997" bpmnElement="_23A925DA-FD88-4840-9DEB-F0F7C1ED99ED">
@@ -487,7 +487,7 @@ kcontext.setVariable("data", data);</bpmn2:script>
         </bpsim:Scenario>
       </bpsim:BPSimData>
     </bpmn2:extensionElements>
-    <bpmn2:source>_bNIE4AwNEDuWlvFfX6z6zA</bpmn2:source>
-    <bpmn2:target>_bNIE4AwNEDuWlvFfX6z6zA</bpmn2:target>
+    <bpmn2:source>_St3ywAsfEDuKf4dCngUZfg</bpmn2:source>
+    <bpmn2:target>_St3ywAsfEDuKf4dCngUZfg</bpmn2:target>
   </bpmn2:relationship>
 </bpmn2:definitions>

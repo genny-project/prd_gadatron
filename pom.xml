@@ -3,15 +3,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>life.genny</groupId>
-  <artifactId>prd_gadatron</artifactId>
-  <version>10.1.0</version>
+  <artifactId>gadatron</artifactId>
+  <version>10.2.0</version>
   <name>Gadatron Kogito Service</name>
+  <description>Gadatron Kogito Service to handle Genny business logic</description>
   <properties>
     <deploy-plugin.version>3.0.0-M2</deploy-plugin.version>
     <enforcer-plugin.version>3.0.0</enforcer-plugin.version>
     <genny.version>${project.version}</genny.version>
     <jar-plugin.version>3.2.2</jar-plugin.version>
-    <kogito.version>1.26.0.Final</kogito.version>
+    <kogito.version>1.27.0.Final</kogito.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.release>11</maven.compiler.release>
     <maven.compiler.source>11</maven.compiler.source>
@@ -20,32 +21,11 @@
     <maven.version>3.8.1</maven.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>2.11.3.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.12.2.Final</quarkus.platform.version>
     <source-plugin.version>3.2.0</source-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <version.compiler.plugin>3.0.0-M5</version.compiler.plugin>
-    <version.org.optaplanner>8.26.0.Final</version.org.optaplanner>
-    <!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
-    <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.11.3.Final</quarkus.platform.version>
-    <skipITs>true</skipITs>
-    <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
-    <maven.version>3.8.1</maven.version>
-    <maven.compiler.parameters>true</maven.compiler.parameters>
-    <maven.compiler.version>3.8.1</maven.compiler.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <maven.compiler.release>11</maven.compiler.release>
-    <enforcer-plugin.version>3.0.0</enforcer-plugin.version>
-    <jar-plugin.version>3.2.2</jar-plugin.version>
-    <source-plugin.version>3.2.0</source-plugin.version>
-    <deploy-plugin.version>3.0.0-M7</deploy-plugin.version>
-    <version.compiler.plugin>3.0.0-M7</version.compiler.plugin>
-    <genny.version>${project.version}</genny.version>
-    <kogito.version>1.26.0.Final</kogito.version>
-    <version.org.optaplanner>8.26.0.Final</version.org.optaplanner> -->
+    <version.org.optaplanner>8.27.0.Final</version.org.optaplanner>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -72,31 +52,6 @@
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
       <version>${kogito.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>life.genny</groupId>
-      <artifactId>gadaq</artifactId>
-      <version>${genny.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-arc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-junit5</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.24</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
   <build>
@@ -177,7 +132,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -200,6 +154,32 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.kie.kogito</groupId>
+        <artifactId>kogito-maven-plugin</artifactId>
+        <version>${kogito.version}</version>
+      </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>native</id>
+      <activation>
+        <property>
+          <name>native</name>
+        </property>
+      </activation>
+      <properties>
+        <failsafe.include>**/Native*IT.java</failsafe.include>
+        <failsafe.exclude></failsafe.exclude>
+        <tests.quarkus.http.port>8080</tests.quarkus.http.port>
+        <quarkus.package.type>native</quarkus.package.type>
+      </properties>
+    </profile>
+  </profiles>
 </project>

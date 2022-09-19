@@ -12,8 +12,8 @@ rawhost=${parser}
 echo "host (this) = ${host}"
 echo "genny host (target system) = ${gennyhost}"
 echo "raw host (target system) = ${rawhost}"
-echo "internmatch  port ${PRD_GADATRON_PORT}"
-echo "internmatch debug port ${PRD_GADATRON_DEBUG_PORT}"
+echo "gadatron  port ${PRD_GADATRON_PORT}"
+echo "gadatron debug port ${PRD_GADATRON_DEBUG_PORT}"
 
 #export PRODUCT_CODES=${PRODUCT_CODES}
 export GENNY_SHOW_VALUES="TRUE"
@@ -23,7 +23,7 @@ export GENNY_API_URL=${gennyhost}:8280
 export GENNY_KAFKA_URL=${gennyhost}:9092
 export GENNY_CLIENT_ID=backend
 export GENNY_CLIENT_SECRET=${GENNY_CLIENT_SECRET}
-export GENNY_REALM=internmatch
+export GENNY_REALM=gadatron
 export GENNY_KOGITO_SERVICE_URL=${host}:${port}
 export GENNY_KOGITO_DATAINDEX_HTTP_URL=${gennyhost}:8582
 export GENNY_KOGITO_DATAINDEX_WS_URL=ws://${rawhost}:8582
@@ -71,5 +71,5 @@ echo "kogito service $GENNY_KOGITO_SERVICE_URL"
 
 mkdir -p ../kogito-common/src/main/proto
 cp target/classes/META-INF/resources/persistence/protobuf/* src/main/proto/
-echo "PRD_INTERNMATCH_PORT = ${port}"
+echo "PRD_GADATRON_PORT = ${port}"
 ./mvnw clean  quarkus:dev -Ddebug=${PRD_GADATRON_DEBUG_PORT} -Dquarkus.http.port=${port} -DskipTests=true -Dinfinispan.client.hotrod.server_list=10.123.123.123:11222 -Dinfinispan.client.hotrod.client_intelligence=BASIC

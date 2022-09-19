@@ -1,4 +1,4 @@
-package life.genny.gadatron.setupbaseentitys;
+package life.genny.gadatron.setupBaseEntitys;
 
 import java.lang.invoke.MethodHandles;
 
@@ -9,7 +9,6 @@ import javax.json.bind.JsonbBuilder;
 
 import org.jboss.logging.Logger;
 
-import life.genny.gadatron.Constants;
 import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.models.UserToken;
@@ -21,8 +20,7 @@ import life.genny.qwandaq.utils.SearchUtils;
 public class DocumentService {
 
 	static final Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass());
-	
-	public static final String ENTITY_TYPE = "Document";
+	static final String entityType = "Document";
 
 	static Jsonb jsonb = JsonbBuilder.create();
 
@@ -46,9 +44,9 @@ public class DocumentService {
 	 * @return true if successful
 	 */
 	public Boolean setup(String code) {
-		log.info("=========================initialise " + ENTITY_TYPE + "=========================");
+		log.info("=========================initialise " + entityType + "=========================");
 		log.info("Source Code = " + userToken.getUserCode());
-		log.info(ENTITY_TYPE + " Code = " + code);
+		log.info(entityType + " Code = " + code);
 
 		BaseEntity document = beUtils.getBaseEntityOrNull(code);
 
@@ -58,7 +56,7 @@ public class DocumentService {
 		}
 
 		// set core attributes
-		document = beUtils.addValue(document, Constants.PRI_CODE, code);
+		document = beUtils.addValue(document, "PRI_CODE", code);
 		beUtils.updateBaseEntity(document);
 
 		return true;
@@ -71,18 +69,18 @@ public class DocumentService {
 	 * @return true if successful
 	 */
 	public Boolean activate(String code) {
-		log.info("=========================activate " + ENTITY_TYPE + "=========================");
+		log.info("=========================activate " + entityType + "=========================");
 		log.info("Source Code = " + userToken.getUserCode());
-		log.info(ENTITY_TYPE + " Code = " + code);
+		log.info(entityType + " Code = " + code);
 
 		BaseEntity entity = beUtils.getBaseEntityOrNull(code);
 
 		if (entity == null) {
-			log.error(ENTITY_TYPE + " not found");
+			log.error(entityType + " not found");
 			return false;
 		}
 
-		BaseEntity coreBe = beUtils.getBaseEntityFromLinkAttribute(entity, Constants.LNK_COREBE);
+		BaseEntity coreBe = beUtils.getBaseEntityFromLinkAttribute(entity, "LNK_COREBE");
 
 		if (coreBe == null) {
 			log.error("CoreBE not found");
@@ -103,14 +101,14 @@ public class DocumentService {
 	 * @return true if successful
 	 */
 	public Boolean archive(String code) {
-		log.info("=========================Archive " + ENTITY_TYPE + "=========================");
+		log.info("=========================Archive " + entityType + "=========================");
 		log.info("Source Code = " + userToken.getUserCode());
-		log.info(ENTITY_TYPE + " Code = " + code);
+		log.info(entityType + " Code = " + code);
 
 		BaseEntity entity = beUtils.getBaseEntityOrNull(code);
 
 		if (entity == null) {
-			log.error(ENTITY_TYPE + " not found");
+			log.error(entityType + " not found");
 			return false;
 		}
 
@@ -127,14 +125,14 @@ public class DocumentService {
 	 * @return true if successful
 	 */
 	public Boolean cancel(String code) {
-		log.info("=========================Cancel " + ENTITY_TYPE + "=========================");
+		log.info("=========================Cancel " + entityType + "=========================");
 		log.info("Source Code = " + userToken.getUserCode());
-		log.info(ENTITY_TYPE + " Code = " + code);
+		log.info(entityType + " Code = " + code);
 
 		BaseEntity entity = beUtils.getBaseEntityOrNull(code);
 
 		if (entity == null) {
-			log.error(ENTITY_TYPE + " not found");
+			log.error(entityType + " not found");
 			return false;
 		}
 		entity.setStatus(EEntityStatus.DELETED);

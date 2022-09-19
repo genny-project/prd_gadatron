@@ -1,14 +1,17 @@
-package life.genny.gadatron.setupbaseentitys;
+package life.genny.gadatron.setupBaseEntitys;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.List;
 
-import life.genny.gadatron.Constants;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.SearchEntity;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
+import life.genny.qwandaq.utils.CacheUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 
@@ -55,7 +58,8 @@ public class CompanyService {
 		}
 
 		// set core attributes
-		Company = beUtils.addValue(Company, Constants.PRI_CODE, code);
+		Company = beUtils.addValue(Company, "PRI_CODE", code);
+		Company = beUtils.addValue(Company, "PRI_APPLIED_BY", userToken.getUserCode());
 
 		beUtils.updateBaseEntity(Company);
 
@@ -65,7 +69,7 @@ public class CompanyService {
 	/**
 	 * setup the Company with active data.
 	 *
-	 * @param CompanyCode The targeted BaseEntity
+	 * @param code The targeted BaseEntity
 	 * @return true if successful
 	 */
 	public Boolean activate(String code) {
@@ -89,7 +93,7 @@ public class CompanyService {
 	/**
 	 * Archive the Company with active data.
 	 *
-	 * @param CompanyCode The targeted BaseEntity
+	 * @param code The targeted BaseEntity
 	 * @return true if successful
 	 */
 	public Boolean archive(String code) {
@@ -113,7 +117,7 @@ public class CompanyService {
 	/**
 	 * Cancel the Company with active data.
 	 *
-	 * @param CompanyCode The targeted BaseEntity
+	 * @param code The targeted BaseEntity
 	 * @return true if successful
 	 */
 	public Boolean cancel(String code) {
@@ -136,7 +140,7 @@ public class CompanyService {
 	/**
 	 * Abort the Company creation.
 	 *
-	 * @param CompanyCode The targeted BaseEntity
+	 * @param code The targeted BaseEntity
 	 * @return true if successful
 	 */
 	public Boolean abort(String code) {
