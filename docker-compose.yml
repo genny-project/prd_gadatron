@@ -1,7 +1,7 @@
 version: '2.3'
 
 services:
-  prd_<your-product>:
+  prd_gadatron:
     image: gennyproject/prd_gadatron:latest
     container_name: prd_gadatron
     hostname: prd_gadatron
