@@ -1,5 +1,7 @@
 package life.genny.gadatron.search;
 
+import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
+
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,13 @@ import life.genny.qwandaq.models.GennySettings;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.Action;
+import life.genny.qwandaq.entity.search.trait.Column;
+import life.genny.qwandaq.entity.search.trait.AssociatedColumn;
+import life.genny.qwandaq.entity.search.trait.Filter;
+import life.genny.qwandaq.entity.search.trait.Operator;
+import life.genny.qwandaq.entity.search.trait.Ord;
+import life.genny.qwandaq.entity.search.trait.Sort;
 import life.genny.qwandaq.utils.CacheUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,24 +33,32 @@ public class SearchCaching {
 	public static final String SBE_COMMUNICATIONS = "SBE_COMMUNICATIONS";
 	public static final String SBE_DEV_UI = "SBE_DEV_UI";
 	public static final String SBE_DOCUMENTS_GRP = "SBE_DOCUMENTS_GRP";
+	public static final String SBE_EDU_PROVIDERS_VIEW = "SBE_EDU_PROVIDERS_VIEW";
+	public static final String SBE_HOST_COMPANIES_VIEW = "SBE_HOST_COMPANIES_VIEW";
+	public static final String SBE_HOST_COMPANIES = "SBE_HOST_COMPANIES";
+	public static final String SBE_INTERNSHIPS = "SBE_INTERNSHIPS";
+	public static final String SBE_LOGBOOK = "SBE_LOGBOOK";
 
 	// contacts
-	public static final String SBE_PERSONS = "SBE_PERSONS";
-	public static final String SBE_TABLE_PERSONS = "SBE_TABLE_PERSONS";
-	public static final String SBE_COMPANIES_VIEW = "SBE_COMPANIES_VIEW";
-	public static final String SBE_TABLE_COMPANIES = "SBE_TABLE_COMPANIES";
+	public static final String SBE_AGENTS = "SBE_AGENTS";
+	public static final String SBE_TABLE_EPRS = "SBE_TABLE_EPRS";
+	public static final String SBE_EPRS = "SBE_EPRS";
+	public static final String SBE_TABLE_HCRS = "SBE_TABLE_HCRS";
+	public static final String SBE_HCRS = "SBE_HCRS";
+	public static final String SBE_INTERNS = "SBE_INTERNS";
+	public static final String SBE_TABLE_INTERNS = "SBE_TABLE_INTERNS";
+	public static final String SBE_REFERRERS = "SBE_REFERRERS";
 
 	// bucket
 	public static final String SBE_TAB_BUCKET_VIEW = "SBE_TAB_BUCKET_VIEW";
-	public static final String SBE_BUCKET1 = "SBE_BUCKET1";
-	public static final String SBE_BUCKET2 = "SBE_BUCKET2";
-	public static final String SBE_BUCKET3 = "SBE_BUCKET3";
+	public static final String SBE_APPLIED_APPLICATIONS = "SBE_APPLIED_APPLICATIONS";
+	public static final String SBE_AVAILABLE_INTERNS = "SBE_AVAILABLE_INTERNS";
+	public static final String SBE_INPROGRESS_APPLICATIONS = "SBE_INPROGRESS_APPLICATIONS";
+	public static final String SBE_INTERVIEWED_APPLICATIONS = "SBE_INTERVIEWED_APPLICATIONS";
+	public static final String SBE_OFFERED_APPLICATIONS = "SBE_OFFERED_APPLICATIONS";
+	public static final String SBE_PLACED_APPLICATIONS = "SBE_PLACED_APPLICATIONS";
+	public static final String SBE_SHORTLISTED_APPLICATIONS = "SBE_SHORTLISTED_APPLICATIONS";
 
-	/**
-	 * Set caching for all entities
-	 * 
-	 * @param realm Realm of product
-	 */
 	public void saveToCache(String realm) {
 		log.info("=========================saveToCache=========================");
 
@@ -52,22 +69,93 @@ public class SearchCaching {
 		entities.add(getSBECommunications(realm, SearchCaching.SBE_COMMUNICATIONS));
 		entities.add(getSBEDevUI(realm, SearchCaching.SBE_DEV_UI));
 		entities.add(getSBEDocuments(realm, SearchCaching.SBE_DOCUMENTS_GRP));
+		entities.add(getSBEEduProvider(realm, SearchCaching.SBE_EDU_PROVIDERS_VIEW));
+		entities.add(getSBEHostCompany(realm, SearchCaching.SBE_HOST_COMPANIES));
+		entities.add(getSBEHostCompany(realm, SearchCaching.SBE_HOST_COMPANIES_VIEW));
+		entities.add(getSBEInternships(realm, SearchCaching.SBE_INTERNSHIPS));
+		entities.add(getSBELogbook(realm, SearchCaching.SBE_LOGBOOK));
 
 		// Contacts
-		entities.add(getSBEPersons(realm, SearchCaching.SBE_PERSONS));
-		entities.add(getSBECompanies(realm, SearchCaching.SBE_COMPANIES_VIEW));
+		entities.add(getSBEAgents(realm, SearchCaching.SBE_AGENTS));
+		entities.add(getSBEEduProviderRep(realm, SearchCaching.SBE_EPRS));
+		entities.add(getSBEEduProviderRep(realm, SearchCaching.SBE_TABLE_EPRS));
+		entities.add(getSBEHostCompanyRep(realm, SearchCaching.SBE_HCRS));
+		entities.add(getSBEHostCompanyRep(realm, SearchCaching.SBE_TABLE_HCRS));
+		entities.add(getSBEInterns(realm, SearchCaching.SBE_INTERNS));
+		entities.add(getSBEInterns(realm, SearchCaching.SBE_TABLE_INTERNS));
+		entities.add(getSBEReferralPartnerRep(realm, SearchCaching.SBE_REFERRERS));
 
 		// bucket page
 		setSBETabBucketView(realm, SearchCaching.SBE_TAB_BUCKET_VIEW);
-		entities.add(getSBEBucket1(realm, SearchCaching.SBE_BUCKET1));
-		entities.add(getSBEBucket2(realm, SearchCaching.SBE_BUCKET2));
-		entities.add(getSBEBucket3(realm, SearchCaching.SBE_BUCKET3));
+		entities.add(getSBEBucketApplied(realm, SearchCaching.SBE_APPLIED_APPLICATIONS));
+		entities.add(getSBEBucketAvailable(realm, SearchCaching.SBE_AVAILABLE_INTERNS));
+		entities.add(getSBEBucketInprogressApp(realm, SearchCaching.SBE_INPROGRESS_APPLICATIONS));
+		entities.add(getSBEBucketInterview(realm, SearchCaching.SBE_INTERVIEWED_APPLICATIONS));
+		entities.add(getSBEBucketOffered(realm, SearchCaching.SBE_OFFERED_APPLICATIONS));
+		entities.add(getSBEBucketPlaced(realm, SearchCaching.SBE_PLACED_APPLICATIONS));
+		entities.add(getSBEBucketShortlisted(realm, SearchCaching.SBE_SHORTLISTED_APPLICATIONS));
 
 		// save to cache
 		entities.stream().forEach(e -> {
 			e.setRealm(realm);
 			CacheUtils.putObject(realm, e.getCode(), e);
 		});
+
+		// DEF_AGENT
+		cacheDropdown("DEF_AGENT",
+				new SearchEntity("SBE_SER_LNK_AGENCY", "Agency Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_AGENCY")));
+
+		// DEF_HOST_CPY_REP
+		cacheDropdown("DEF_HOST_CPY_REP",
+				new SearchEntity("SBE_SER_LNK_HOST_COMPANY", "Host Company Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_HOST_COMPANY")));
+
+		// DEF_EDU_PRO_REP
+		cacheDropdown("DEF_EDU_PRO_REP",
+				new SearchEntity("SBE_SER_LNK_EDU_PROVIDER", "Edu Provider Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_EDU_PROVIDER")));
+
+		// DEF_INTERN
+		cacheDropdown("DEF_INTERN",
+				new SearchEntity("SBE_SER_LNK_EDU_PROVIDER", "Edu Provider Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_EDU_PROVIDER")));
+
+		// DEF_INTERNSHIP
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_HOST_COMPANY", "Host Company Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_HOST_COMPANY")));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_HOST_COMPANY_REP", "Host Company Rep Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_HOST_COMPANY_REP"))
+						.add(new Filter("LNK_HOST_COMPANY", Operator.CONTAINS, "[[SOURCE.LNK_HOST_COMPANY]]")));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_INTERN_SUPERVISOR", "Intern Supervisor Dropdown")
+						.add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_HOST_COMPANY_REP"))
+						.add(new Filter("LNK_HOST_COMPANY", Operator.CONTAINS, "[[SOURCE.LNK_HOST_COMPANY]]")));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_INTERNSHIP_TYPE", "Internship Type Dropdown")
+						.setLinkValue("INTERNSHIP_TYPE"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_INDUSTRY", "Industry Dropdown")
+						.setLinkValue("INDUSTRY"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_OCCUPATION", "Occupation Dropdown")
+						.setSourceCode("[[TARGET.LNK_INDUSTRY]]")
+						.setLinkValue("LNK_IND"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_DRESS_CODE", "Dress Code Dropdown")
+						.setLinkValue("DRESS_CODE"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_NO_OF_INTERNS", "No Of Interns Dropdown")
+						.setLinkValue("NO_OF_INTERNS"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_WORKSITE_SELECT", "Worksite Dropdown")
+						.setLinkValue("WORKSITE"));
+		cacheDropdown("DEF_INTERNSHIP",
+				new SearchEntity("SBE_SER_LNK_SOFTWARE", "Software Dropdown")
+						.setLinkValue("SOFTWARE"));
+
 	}
 
 	/**
@@ -79,19 +167,19 @@ public class SearchCaching {
 	 */
 	public SearchEntity getSBEAppointment(String realm, String name) {
 		SearchEntity searchBE = new SearchEntity(name, "Appointments")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "APT_%")
-				.addFilter("PRI_IS_APPOINTMENT", true)
-				.addColumn("PRI_CODE", "Code")
-				.addColumn("PRI_NAME", "Name")
-				.addColumn("PRI_DURATION_MIN", "Minimum Duration")
-				.addColumn("PRI_START_DATETIME", "Start Date")
-				.addColumn("PRI_ACTUAL_START_DATETIME", "Actual Start Date")
-				.addColumn("PRI_GENERIC_URL", "URL (Optional)")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APT_%"))
+				.add(new Filter("PRI_IS_APPOINTMENT", true))
+				.add(new Column("PRI_CODE", "Code"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_DURATION_MIN", "Minimum Duration"))
+				.add(new Column("PRI_START_DATETIME", "Start Date"))
+				.add(new Column("PRI_ACTUAL_START_DATETIME", "Actual Start Date"))
+				.add(new Column("PRI_GENERIC_URL", "URL (Optional)"))
 				/* .addColumn("LNK_SELECT_TOOL", "Select Tool") */
-				.addColumn("LNK_RESOURCES", "Resources")
-				.addColumn("LNK_RESOURCES_ACCEPTED", "Accepted Resources")
-				.addAction("EDIT", "Edit")
+				.add(new Column("LNK_RESOURCES", "Resources"))
+				.add(new Column("LNK_RESOURCES_ACCEPTED", "Accepted Resources"))
+				.add(new Action("EDIT", "Edit"))
 				.setPageStart(0)
 				.setPageSize(10000);
 
@@ -110,21 +198,21 @@ public class SearchCaching {
 	 */
 	public SearchEntity getSBECommunications(String realm, String name) {
 		SearchEntity searchBE = new SearchEntity(name, "Communications Templates")
-				.addSort("PRI_NAME", "Name", SearchEntity.Sort.ASC)
+				.add(new Sort("PRI_NAME", Ord.ASC))
 				/* .addSort("PRI_CREATED_DATE", "Date Created", SearchEntity.Sort.DESC) */
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "MSG_%")
+				.add(new Filter("PRI_CODE", Operator.LIKE, "MSG_%"))
 
-				.addColumn("PRI_CODE", "Code")
-				.addColumn("PRI_NAME", "Name")
-				.addColumn("PRI_DESCRIPTION", "Description")
-				.addColumn("PRI_DEFAULT_MSG_TYPE", "Default Message Type")
-				.addColumn("PRI_CONTEXT_LIST", "Context List")
-				.addColumn("PRI_CONTEXT_ASSOCIATIONS", "Context Associations")
-				.addColumn("PRI_CC", "CC")
-				.addColumn("PRI_BCC", "BCC")
-				.addColumn("PRI_BODY", "Body")
+				.add(new Column("PRI_CODE", "Code"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_DESCRIPTION", "Description"))
+				.add(new Column("PRI_DEFAULT_MSG_TYPE", "Default Message Type"))
+				.add(new Column("PRI_CONTEXT_LIST", "Context List"))
+				.add(new Column("PRI_CONTEXT_ASSOCIATIONS", "Context Associations"))
+				.add(new Column("PRI_CC", "CC"))
+				.add(new Column("PRI_BCC", "BCC"))
+				.add(new Column("PRI_BODY", "Body"))
 
-				.addAction("PRI_EVENT_EDIT_MESSAGE", "Edit")
+				.add(new Action("PRI_EVENT_EDIT_MESSAGE", "Edit"))
 
 				.setPageStart(0)
 				.setPageSize(10000);
@@ -144,10 +232,10 @@ public class SearchCaching {
 	 */
 	public SearchEntity getSBEDevUI(String realm, String name) {
 		SearchEntity searchBE = new SearchEntity(name, "Dev UI")
-				.addSort("PRI_CODE", "Code", SearchEntity.Sort.ASC)
-				.addColumn("PRI_CODE", "Code")
-				.addColumn("PRI_NAME", "Name")
-				.addAction("EDIT", "Edit")
+				.add(new Sort("PRI_CODE", Ord.ASC))
+				.add(new Column("PRI_CODE", "Code"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Action("EDIT", "Edit"))
 				.setSearchStatus(EEntityStatus.DELETED)
 				.setPageStart(0)
 				.setPageSize(50);
@@ -169,50 +257,51 @@ public class SearchCaching {
 		SearchEntity searchBE = new SearchEntity(name, "Documents")
 				// .addSort("PRI_LEGAL_NAME", "Legal Name", SearchEntity.Sort.ASC)
 				// .addSort("PRI_NAME", "Name", SearchEntity.Sort.ASC) // not working
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "DOC_%")
+				.add(new Filter("PRI_CODE", Operator.LIKE, "DOC_%"))
 				// .addColumn("PRI_NAME", "Name") //not working
 				// .addColumn("PRI_LEGAL_NAME", "Legal Name")
 				// .addAssociatedColumn("LNK_SIGNEE", "PRI_NAME", "Signee")
-				.addAction("EDIT", "Edit")
+				.add(new Action("EDIT", "Edit"))
 				.setPageStart(0)
 				.setPageSize(10000);
 
 		searchBE.setRealm(realm);
-		CacheUtils.putObject(name, searchBE.getCode(), searchBE);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
 
 		return searchBE;
 	}
 
 	/**
-	 * Get search base entity of persons
+	 * Get search base entity of education provider
 	 * 
 	 * @param realm Realm of product
 	 * @param name  Caching name
-	 * @return search base entity of persons
+	 * @return search base entity of education provider
 	 */
-	public SearchEntity getSBEPersons(String realm, String name) {
-		SearchEntity searchBE = new SearchEntity(name, "People")
+	public SearchEntity getSBEEduProvider(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Education Providers")
 				/* Sorts */
-				.addSort("PRI_NAME", "Name", SearchEntity.Sort.ASC)
+				.add(new Sort("PRI_NAME", Ord.ASC))
 
 				/* Filters */
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_STATUS", SearchEntity.StringFilter.EQUAL, "ACTIVE")
+				.add(new Filter("PRI_CODE", Operator.LIKE, "CPY_%"))
+				.add(new Filter("PRI_IS_EDU_PROVIDER", true))
+				.add(new Filter("PRI_STATUS", Operator.EQUALS, "ACTIVE"))
 
 				/* Table Columns */
-				.addColumn("PRI_NAME", "Name")
-				.addColumn("PRI_STATUS", "Status")
-				.addColumn("PRI_ADDRESS_FULL", "Address")
-				.addColumn("PRI_IMAGE_URL", "Logo")
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_IMAGE_URL", "Logo"))
 
 				/* Filterable Columns */
 				.addFilterableColumn("PRI_NAME", "Name")
 
 				/* Wildcard Whitelisted Attributes */
-				.addWhitelist("PRI_NAME")
+				// .addWhitelist("PRI_NAME")
 
 				/* Table actions */
-				.addAction("PRI_EVENT_VIEW", "View Profile")
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
 		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
@@ -225,36 +314,37 @@ public class SearchCaching {
 	}
 
 	/**
-	 * Get search base entity of company
+	 * Get search base entity of host company
 	 * 
 	 * @param realm Realm of product
 	 * @param name  Caching name
-	 * @return search base entity of company
+	 * @return search base entity of host company
 	 */
-	public SearchEntity getSBECompanies(String realm, String name) {
-		SearchEntity searchBE = new SearchEntity("SBE_COMPANIES_VIEW", "Companies")
+	public SearchEntity getSBEHostCompany(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Host Companies")
 				/* Sorts */
-				.addSort("PRI_NAME", "Name", SearchEntity.Sort.ASC)
-				.addSort("PRI_CREATED_DATE", "Date Created", SearchEntity.Sort.DESC)
+				.add(new Sort("PRI_NAME", Ord.ASC))
+				.add(new Sort("PRI_CREATED_DATE", Ord.DESC))
 				/* .addSort("PRI_ASSOC_INDUSTRY", "Company Industry", SearchEntity.Sort.ASC) */
 				/* .addSort("PRI_ADDRESS_STATE", "State", SearchEntity.Sort.ASC) */
 				/* .addSort("PRI_VALIDATION", "Validation", SearchEntity.Sort.ASC) */
 				/* .addSort("PRI_STATUS", "Status", SearchEntity.Sort.ASC) */
 
 				/* Filters */
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "CPY_%")
-				.addFilter("PRI_STATUS", SearchEntity.StringFilter.EQUAL, "ACTIVE")
+				.add(new Filter("PRI_CODE", Operator.LIKE, "CPY_%"))
+				.add(new Filter("PRI_IS_HOST_CPY", true))
+				.add(new Filter("PRI_STATUS", Operator.EQUALS, "ACTIVE"))
 
 				/* Table Columns */
-				.addColumn("PRI_IMAGE_URL", "Logo")
-				.addColumn("PRI_NAME", "Name")
-				.addColumn("PRI_CREATED_DATE", "Date Created")
-				.addColumn("PRI_STATUS", "Status")
-				.addColumn("PRI_VALIDATION", "Validation")
-				.addColumn("PRI_MOBILE", "Phone")
-				.addColumn("PRI_ADDRESS_FULL", "Address")
-				.addColumn("PRI_ADDRESS_STATE", "State")
-				.addColumn("PRI_ADDRESS_COUNTRY", "Country")
+				.add(new Column("PRI_IMAGE_URL", "Logo"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_CREATED_DATE", "Date Created"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new Column("PRI_VALIDATION", "Validation"))
+				.add(new Column("PRI_MOBILE", "Phone"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_ADDRESS_STATE", "State"))
+				.add(new Column("PRI_ADDRESS_COUNTRY", "Country"))
 
 				/* Filterable Columns */
 				.addFilterableColumn("PRI_NAME", "Name")
@@ -268,7 +358,384 @@ public class SearchCaching {
 				.addWhitelist("PRI_NAME")
 
 				/* Table actions */
-				.addAction("PRI_EVENT_VIEW", "View Profile")
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
+				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of internships
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of internships
+	 */
+	public SearchEntity getSBEInternships(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Internships")
+				/* Sorts */
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Sort("PRI_STATUS", Ord.ASC))
+				/* .addSort("PRI_ASSOC_INDUSTRY","Industry",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ASSOC_HC","Host Company",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_INTERNSHIP_START_DATE","Start Date",SearchEntity.Sort.ASC) */
+
+				/* Filters */
+				.add(new Filter("PRI_IS_INTERNSHIP", true))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "BEG_%"))
+				/* .addFilter("PRI_STATUS", SearchEntity.StringFilter.LIKE, "ACTIVE") */
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Company Logo"))
+				.add(new Column("PRI_NAME", "Title"))
+				/* .addColumn("PRI_INTERNSHIP_TITLE", "Title") */
+				.add(new Column("PRI_CREATED", "Date Created"))
+				.add(new Column("PRI_STATUS", "Status"))
+				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+				.add(new AssociatedColumn("LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_ADDRESS_STATE", "State"))
+				.add(new Column("PRI_ADDRESS_COUNTRY", "Country"))
+				.add(new Column("PRI_INTERNSHIP_START_DATE", "Proposed Start Date"))
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_NO_OF_INTERNS", "Number of allowed Interns"))
+				.add(new AssociatedColumn("LNK_SOFTWARE", "PRI_NAME", "Software"))
+				.add(new AssociatedColumn("LNK_WORKSITE_SELECT", "PRI_NAME", "Worksite"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Specialisation"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Title")
+				.addFilterableColumn("PRI_STATUS", "Status")
+				.addFilterableColumn("PRI_ASSOC_INDUSTRY", "Industry")
+				.addFilterableColumn("PRI_ASSOC_HC", "Host Company")
+				.addFilterableColumn("PRI_ADDRESS_COUNTRY", "Country")
+				.addFilterableColumn("PRI_CREATED_DATE", "Date Created")
+				.addFilterableColumn("PRI_INTERNSHIP_TYPE", "Internship Type")
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+				/* .addWhitelist("PRI_ASSOC_HC") */
+				.setWildcardDepth(1)
+
+				/* Row Actions */
+				.add(new Action("PRI_EVENT_VIEW", "View"))
+
+				/* Table Actions */
+				// .addSearchAction("PRI_EVENT_MAP_VIEW", "Map View")
+
+				.setPageStart(0).setPageSize(30);
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of internships
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of internships
+	 */
+	public SearchEntity getSBELogbook(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Logbook")
+				.add(new Filter("PRI_CODE", Operator.LIKE, "JNL_%"))
+				.add(new Sort("PRI_JOURNAL_DATE", Ord.ASC))
+				.add(new Column("PRI_JOURNAL_DATE", "Date"))
+				.add(new Column("PRI_JOURNAL_HOURS", "Hours"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new Column("PRI_JOURNAL_TASKS", "Roles and Responsibilities"))
+				.add(new Column("PRI_JOURNAL_LEARNING_OUTCOMES", "Learning Outcomes"))
+				.add(new Column("PRI_HAS_DOWNLOAD_LINK", " "))
+				// .setDisplayMode("journal")
+				.setPageStart(0)
+				.setPageSize(1000);
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of agents
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of agents
+	 */
+	public SearchEntity getSBEAgents(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Agents")
+				/* Sorts */
+				.add(new Sort("PRI_NAME", Ord.ASC))
+
+				/* Filters */
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_AGENT", true))
+
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new AssociatedColumn("LNK_AGENCY", "PRI_NAME", "Agency Name"))
+				.add(new Column("PRI_EMAIL", "Email"))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Name")
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				/* Table actions */
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
+				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of education provider representatives
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of education provider representatives
+	 */
+	public SearchEntity getSBEEduProviderRep(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Education Provider Representatives")
+				/* Sorts */
+				.add(new Sort("PRI_NAME", Ord.ASC))
+				/* .addSort("PRI_STATUS","Status",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ASSOC_EP","Education Provider",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_JOB_TITLE","Job Title",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_DEPARTMENT","Department",SearchEntity.Sort.ASC) */
+
+				/* Filters */
+				/*
+				 * .addFilter("PRI_NAME",SearchEntity.StringFilter.LIKE, "%%")
+				 * .addFilter("PRI_STATUS",SearchEntity.StringFilter.LIKE, "%%")
+				 * .addFilter("PRI_ASSOC_EP",SearchEntity.StringFilter.LIKE, "%%")
+				 * .addFilter("PRI_JOB_TITLE",SearchEntity.StringFilter.LIKE, "%%")
+				 * .addFilter("PRI_DEPARTMENT",SearchEntity.StringFilter.LIKE, "%%")
+				 */
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_EDU_PRO_REP", true))
+
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new Column("PRI_ASSOC_EP", "Education Provider"))
+				.add(new Column("PRI_EMAIL", "Email"))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+				.add(new Column("PRI_JOB_TITLE", "Job Title"))
+				.add(new Column("PRI_DEPARTMENT", "Department"))
+				.add(new Column("PRI_LINKEDIN_URL", "LinkedIn"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Name")
+				.addFilterableColumn("PRI_STATUS", "Status")
+				.addFilterableColumn("PRI_ASSOC_EP", "Education Provider")
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				/* Table actions */
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
+				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of Host Company Representatives
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of Host Company Representatives
+	 */
+	public SearchEntity getSBEHostCompanyRep(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Host Company Representatives")
+				/* Sorts */
+				.add(new Sort("PRI_NAME", Ord.ASC))
+				.add(new Sort("PRI_CREATED_DATE", Ord.DESC))
+				/* .addSort("PRI_STATUS","Status",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ASSOC_HC","Company",SearchEntity.Sort.ASC) */
+
+				/* Filters */
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_HOST_CPY_REP", true))
+
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_CREATED_DATE", "Date Created"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new AssociatedColumn("LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new Column("PRI_EMAIL", "Email"))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Name")
+				.addFilterableColumn("PRI_STATUS", "Status")
+				.addFilterableColumn("PRI_ASSOC_HC", "Company")
+				.addFilterableColumn("PRI_CREATED_DATE", "Date Created")
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				/* Table actions */
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
+				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of interns
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of interns
+	 */
+	public SearchEntity getSBEInterns(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Interns")
+				/* Sorts */
+				.add(new Sort("PRI_NAME", Ord.ASC))
+				.add(new Sort("PRI_CREATED_DATE", Ord.DESC))
+				/* .addSort("PRI_STATUS","Status", SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ASSOC_INDUSTRY", "Industry", SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_NUM_JOURNALS", "Journals", SearchEntity.Sort.DESC) */
+				/* .addSort("PRI_START_DATE","Start Date",SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ASSOC_EP", "Education Provider", SearchEntity.Sort.ASC) */
+				/* .addSort("PRI_ADDRESS_STATE", "State",SearchEntity.Sort.ASC) */
+
+				/* Filters */
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_INTERN", true))
+				/* .setSearchStatus(EEntityStatus.PENDING) */
+
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_CREATED_DATE", "Date Created"))
+				.add(new Column("PRI_PREFERRED_NAME", "Preferred Name"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new AssociatedColumn("LNK_INDUSTRY", "PRI_NAME", "Industry"))
+				.add(new AssociatedColumn("LNK_OCCUPATION", "PRI_NAME", "Occupation"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP_DURATION", "PRI_NAME", "Internship Duration"))
+				.add(new AssociatedColumn("LNK_DAYS_PER_WEEK", "PRI_NAME", "Days per week"))
+				.add(new Column("PRI_EMAIL", "Email"))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+				.add(new AssociatedColumn("LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("LNK_AGENT", "PRI_ASSOC_AGENCY", "Assoc Agency"))
+				.add(new Column("PRI_START_DATE", "Start Date"))
+				.add(new Column("PRI_ADDRESS_SUBURB", "Suburb"))
+				.add(new Column("PRI_ADDRESS_STATE", "State"))
+				.add(new Column("PRI_ADDRESS_COUNTRY", "Country"))
+				.add(new Column("PRI_VIDEO_URL", "Video URL"))
+				.add(new Column("PRI_CV", "CV"))
+				.add(new Column("PRI_NUM_JOURNALS", "Completed Journals"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_NAME", "Academy"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Name")
+				.addFilterableColumn("PRI_STATUS", "Status")
+				.addFilterableColumn("PRI_ASSOC_INDUSTRY", "Industry")
+				.addFilterableColumn("PRI_START_DATE", "Start Date")
+				.addFilterableColumn("PRI_AGENT_NAME", "Agent Name")
+				.addFilterableColumn("PRI_BATCH", "Batch")
+				.addFilterableColumn("PRI_ADDRESS_COUNTRY", "Country")
+				.addFilterableColumn("PRI_CREATED_DATE", "Date Created")
+				.addFilterableColumn("PRI_ASSOC_COMP_INTERNSHIP", "Academy")
+
+				/* Table actions */
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
+				.add(new Action("PRI_EVENT_JOURNAL_VIEW", "View Logbook"))
+				/* .addAction("PRI_EVENT_APPLY", "Apply to an Internship") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				/* Row Action */
+				// .addRowAction("PRI_EVENT_VIEW_APPLICATIONS", "View Applications")
+				.add(new Action("PRI_EVENT_VIEW_APPLICATIONS", "View Applications"))
+				.setCachable(true)
+				.setWildcardDepth(1)
+				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
+
+		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		searchBE.addAttribute(priIndex, 1.0, 1);
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of Referrers
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of Referrers
+	 */
+	public SearchEntity getSBEReferralPartnerRep(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Referrers")
+				/* Sorts */
+				.add(new Sort("PRI_NAME", Ord.ASC))
+
+				/* Filters */
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_REF_PART_REP", true))
+
+				/* Table Columns */
+				.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new Column("PRI_STATUS", "Status"))
+				.add(new Column("PRI_EMAIL", "Email"))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+
+				/* Filterable Columns */
+				.addFilterableColumn("PRI_NAME", "Name")
+
+				/* Table actions */
+				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
 		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
@@ -289,45 +756,76 @@ public class SearchCaching {
 	 */
 	public void setSBETabBucketView(String realm, String name) {
 		List<String> bucketCodes = new ArrayList<String>();
-		bucketCodes.add("SBE_AVAILABLE_INTERNS");
-		bucketCodes.add("SBE_APPLIED_APPLICATIONS");
-		bucketCodes.add("SBE_SHORTLISTED_APPLICATIONS");
-		bucketCodes.add("SBE_INTERVIEWED_APPLICATIONS");
-		bucketCodes.add("SBE_OFFERED_APPLICATIONS");
-		bucketCodes.add("SBE_PLACED_APPLICATIONS");
-		bucketCodes.add("SBE_INPROGRESS_APPLICATIONS");
+		bucketCodes.add(SBE_AVAILABLE_INTERNS);
+		bucketCodes.add(SBE_APPLIED_APPLICATIONS);
+		bucketCodes.add(SBE_SHORTLISTED_APPLICATIONS);
+		bucketCodes.add(SBE_INTERVIEWED_APPLICATIONS);
+		bucketCodes.add(SBE_OFFERED_APPLICATIONS);
+		bucketCodes.add(SBE_PLACED_APPLICATIONS);
+		bucketCodes.add(SBE_INPROGRESS_APPLICATIONS);
 
-		CacheUtils.putObject(realm, "SBE_TAB_BUCKET_VIEW", bucketCodes);
+		CacheUtils.putObject(realm, SBE_TAB_BUCKET_VIEW, bucketCodes);
 	}
 
 	/**
-	 * Get search base entity of bucket1
+	 * Get search base entity of applied bucket
 	 * 
 	 * @param realm Realm of product
 	 * @param name  Caching name
-	 * @return search base entity of bucket1
+	 * @return search base entity of applied bucket
 	 */
-	public SearchEntity getSBEBucket1(String realm, String name) {
-		SearchEntity searchBE = new SearchEntity(name, "Bucket1")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_STAGE", SearchEntity.StringFilter.EQUAL, "STAGE1")
-				.addFilter("PRI_DISABLED", false)
+	public SearchEntity getSBEBucketApplied(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Applied")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "APPLIED"))
+				.add(new Filter("PRI_DISABLED", false))
 
-				.addAssociatedColumn("PRI_CODE", "PRI_NAME", "Name")
+				/*
+				 * .addFilter("PRI_INTERN_CODE.LNK_SELECT_BATCH",
+				 * SearchEntity.StringFilter.EQUAL, "[\"SEL_DIGITAL_JOBS\"]")
+				 */
+
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
 				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
-				.addColumn("PRI_ADDRESS_FULL", "Address")
-				.addColumn("PRI_STATUS_COLOR", " ")
-				.addColumn("PRI_IMAGE_URL", " ")
-				.addColumn("PRI_IMAGE_SECONDARY", " ")
+				/* .addColumn("PRI_TITLE", "Internship") */
+
+				/* .addColumn("PRI_INTERN_EMAIL", "Email") */
+				.add(new Column("PRI_INTERN_STUDENT_ID", "Student ID"))
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				/* .addColumn("PRI_INTERN_MOBILE", "Mobile") */
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
 
 				/* Wildcard Whitelisted Attributes */
 				.addWhitelist("PRI_NAME")
 
-				.setDisplayMode("CARD:MAIN_3")
+				// .setDisplayMode("CARD:MAIN_3")
 				/* Actions */
-				.addAction("PRI_EVENT_BUCKET2", "Go to Bucket2")
-				.addAction("PRI_EVENT_VIEW", "View Person Profile")
+				.add(new Action("PRI_EVENT_SHORTLIST_APPLICATION", "Shortlist"))
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_EDIT_APPLICATION", "Edit Internship Summary"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_REJECT_APPLICATION", "Reject"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
 				.setCachable(true)
 				.setWildcardDepth(2)
 				.setPageStart(0)
@@ -340,33 +838,127 @@ public class SearchCaching {
 	}
 
 	/**
-	 * Get search base entity of bucket1
+	 * Get search base entity of bucket Available
 	 * 
 	 * @param realm Realm of product
 	 * @param name  Caching name
-	 * @return search base entity of bucket1
+	 * @return search base entity of bucket Available
 	 */
-	public SearchEntity getSBEBucket2(String realm, String name) {
-		SearchEntity searchBE = new SearchEntity(name, "Bucket2")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_STAGE", SearchEntity.StringFilter.EQUAL, "STAGE2")
-				.addFilter("PRI_DISABLED", false)
+	public SearchEntity getSBEBucketAvailable(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Available")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_IS_INTERN", true))
+				.add(new Filter("PRI_DISABLED", false))
+				/*
+				 * .addFilter("PRI_STATUS", SearchEntity.StringFilter.NOT_LIKE, "P%") THIS IS A
+				 * REAL UGLY SMARTASS HACK - ACC - I DID THIS TO AVOID PLACED OR PROGRESS
+				 */
+				.add(new Filter("PRI_STATUS", Operator.NOT_EQUALS, "PLACED"))
+				.add(new Filter("PRI_STATUS", Operator.NOT_EQUALS, "PROGRESS"))
+				.add(new Filter("PRI_STATUS", Operator.NOT_EQUALS, "PENDING"))
 
-				.addAssociatedColumn("PRI_CODE", "PRI_NAME", "Name")
-				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
-				.addColumn("PRI_ADDRESS_FULL", "Address")
-				.addColumn("PRI_STATUS_COLOR", " ")
-				.addColumn("PRI_IMAGE_URL", " ")
-				.addColumn("PRI_IMAGE_SECONDARY", " ")
+				.add(new Column("PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_OCCUPATION", "PRI_NAME", " "))
+				.add(new Column("PRI_MOBILE", "Mobile"))
+				.add(new Column("PRI_EMAIL", "Email"))
+
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+				.add(new AssociatedColumn("LNK_INDUSTRY", "PRI_NAME", "Industry"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP_DURATION", "PRI_NAME", "Duration"))
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new AssociatedColumn("LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
 
 				/* Wildcard Whitelisted Attributes */
 				.addWhitelist("PRI_NAME")
 
-				.setDisplayMode("CARD:MAIN_3")
+				// .setDisplayMode("CARD:MAIN_2")
 				/* Actions */
-				.addAction("PRI_EVENT_BUCKET2", "Go to Bucket3")
-				.addAction("PRI_EVENT_VIEW", "View Person Profile")
+				.add(new Action("PRI_EVENT_POST_INTERVIEW", "Enter Star Rating"))
+				.add(new Action("PRI_EVENT_APPLY", "Apply to an Internship"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATIONS", "View Intern's Applications"))
+				.add(new Action("PRI_EVENT_ARCHIVE_INTERN", "Archive Intern"))
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_INTERN", "Access Notes"))
+				.add(new Action("PRI_EVENT_UNARCHIVE_INTERN", "Unarchive Intern"))
+				.setCachable(true)
+				.setWildcardDepth(1)
+				.setPageStart(0)
+				.setPageSize(GennySettings.defaultBucketSize());
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of bucket In Progress
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of bucket In Progress
+	 */
+	public SearchEntity getSBEBucketInprogressApp(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "In Progress")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "PROGRESS"))
+				.add(new Filter("PRI_DISABLED", false))
+
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+				/* .addColumn("PRI_TITLE", "Internship") */
+				.add(new Column("PRI_END_DATE", "End Date"))
+				.add(new Column("PRI_PROGRESS", "Application Progress"))
+
+				.add(new Column("PRI_INTERN_STUDENT_ID", "Student ID"))
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				.add(new Column("PRI_INTERN_MOBILE", "Mobile"))
+				.add(new Column("PRI_INTERN_EMAIL", "Email"))
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				.add(new Column("PRI_START_DATE", "Internship Start Date"))
+				.add(new Column("PRI_END_DATE", "Internship End Date"))
+				.add(new Column("PRI_ASSOC_DURATION", "Internship Duration"))
+				.add(new Column("PRI_DAYS_PER_WEEK", "Number of Days per week"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				// .setDisplayMode("CARD:MAIN_5")
+				/* Actions */
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_VIEW_AGREEMENT", "View/Sign Agreement Document"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_JOURNAL_VIEW", "View Logbook"))
+				.add(new Action("PRI_EVENT_FINISH_APPLICATION", "Finish Internship"))
+				.add(new Action("PRI_EVENT_EDIT_AGREEMENT", "Edit Agreement Document Data"))
+				.add(new Action("PRI_EVENT_DOWNLOAD_INTERNSHIP_AGREEMENT_DOC",
+						"Download Internship Agreement Document"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
 				.setCachable(true)
 				.setWildcardDepth(2)
 				.setPageStart(0)
@@ -379,33 +971,62 @@ public class SearchCaching {
 	}
 
 	/**
-	 * Get search base entity of bucket3
+	 * Get search base entity of bucket interview
 	 * 
 	 * @param realm Realm of product
 	 * @param name  Caching name
-	 * @return search base entity of bucket3
+	 * @return search base entity of bucket interview
 	 */
-	public SearchEntity getSBEBucket3(String realm, String name) {
-		SearchEntity searchBE = new SearchEntity(name, "Bucket3")
-				.addSort("PRI_CREATED", "Created", SearchEntity.Sort.DESC)
-				.addFilter("PRI_CODE", SearchEntity.StringFilter.LIKE, "PER_%")
-				.addFilter("PRI_STAGE", SearchEntity.StringFilter.EQUAL, "STAGE3")
-				.addFilter("PRI_DISABLED", false)
+	public SearchEntity getSBEBucketInterview(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Interview")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "INTERVIEWED"))
+				.add(new Filter("PRI_DISABLED", false))
 
-				.addAssociatedColumn("PRI_CODE", "PRI_NAME", "Name")
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
 				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
-				.addColumn("PRI_ADDRESS_FULL", "Address")
-				.addColumn("PRI_STATUS_COLOR", " ")
-				.addColumn("PRI_IMAGE_URL", " ")
-				.addColumn("PRI_IMAGE_SECONDARY", " ")
+				/* .addColumn("PRI_TITLE", "Internship") */
+				.add(new Column("PRI_INTERVIEW_START_DATETIME", "Interview Date"))
+				.add(new Column("PRI_INTERVIEW_TYPE", "Interview Type"))
+
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_INTERN_STUDENT_ID", "Student ID"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				.add(new Column("PRI_INTERN_MOBILE", "Mobile"))
+				.add(new Column("PRI_INTERN_EMAIL", "Email"))
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
 
 				/* Wildcard Whitelisted Attributes */
 				.addWhitelist("PRI_NAME")
 
-				.setDisplayMode("CARD:MAIN_3")
+				// .setDisplayMode("CARD:MAIN_5")
 				/* Actions */
-				.addAction("PRI_EVENT_BUCKET2", "Go to Bucket1")
-				.addAction("PRI_EVENT_VIEW", "View Person Profile")
+				.add(new Action("PRI_EVENT_OFFERED_APPLICATION", "Make an Offer"))
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_EDIT_APPLICATION", "Edit Internship Summary"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_REJECT_APPLICATION", "Reject"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
 				.setCachable(true)
 				.setWildcardDepth(2)
 				.setPageStart(0)
@@ -415,6 +1036,226 @@ public class SearchCaching {
 		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
 
 		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of bucket Offered
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of bucket Offered
+	 */
+	public SearchEntity getSBEBucketOffered(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Offered")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "OFFERED"))
+				.add(new Filter("PRI_DISABLED", false))
+
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+				/* .addColumn("PRI_TITLE", "Internship") */
+
+				.add(new Column("PRI_INTERN_STUDENT_ID", "Student ID"))
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_START_DATE", "Start Date"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				.add(new Column("PRI_INTERN_MOBILE", "Mobile"))
+				.add(new Column("PRI_INTERN_EMAIL", "Email"))
+
+				.add(new Column("PRI_AGR_DOC_OUTCOME_SIGNATURE", "Outcome Signature"))
+				.add(new Column("PRI_AGR_DOC_INT_SIGNATURE", "Intern Signature"))
+				.add(new Column("PRI_AGR_DOC_HC_SIGNATURE", "Company Signature"))
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				// .setDisplayMode("CARD:MAIN_3")
+				/* Actions */
+				/* .addAction("PRI_EVENT_VIEW_AGREEMENT", "View Agreement Document") */
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW_AGREEMENT", "View/Sign Agreement Document"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_EDIT_AGREEMENT", "Edit Agreement Document Data"))
+				.add(new Action("PRI_EVENT_DOWNLOAD_INTERNSHIP_AGREEMENT_DOC",
+						"Download Internship Agreement Document"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_REJECT_APPLICATION", "Reject"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
+				.add(new Action("PRI_EVENT_PLACE_APPLICATION", "Place"))
+				.setCachable(true)
+				.setWildcardDepth(2)
+				.setPageStart(0)
+				.setPageSize(GennySettings.defaultBucketSize());
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of bucket Placed
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of bucket Placed
+	 */
+	public SearchEntity getSBEBucketPlaced(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Placed")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "PLACED"))
+				.add(new Filter("PRI_DISABLED", false))
+
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+				/* .addColumn("PRI_TITLE", "Internship") */
+				.add(new Column("PRI_START_DATE", "Start Date"))
+
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_START_DATE", "Start Date"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				.add(new Column("PRI_INTERN_MOBILE", "Mobile"))
+				.add(new Column("PRI_INTERN_EMAIL", "Email"))
+				.add(new Column("PRI_INTERN_STUDENT_ID", "Student ID"))
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				// .setDisplayMode("CARD:MAIN_4")
+				/* Actions */
+				/* .addAction("VIEW_AGREEMENT", "View") */
+				.add(new Action("PRI_EVENT_INPROGRESS_APPLICATION", "Begin Internship"))
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW_AGREEMENT", "View/Sign Agreement Document"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_DOWNLOAD_INTERNSHIP_AGREEMENT_DOC",
+						"Download Internship Agreement Document"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
+				/* .addDefaultAction("PRI_EVENT_INPROGRESS_APPLICATION", "Begin Internship") */
+				.setCachable(true)
+				.setWildcardDepth(2)
+				.setPageStart(0)
+				.setPageSize(GennySettings.defaultBucketSize());
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	/**
+	 * Get search base entity of Referrers
+	 * 
+	 * @param realm Realm of product
+	 * @param name  Caching name
+	 * @return search base entity of Referrers
+	 */
+	public SearchEntity getSBEBucketShortlisted(String realm, String name) {
+		SearchEntity searchBE = new SearchEntity(name, "Shortlisted")
+				.add(new Sort("PRI_CREATED", Ord.DESC))
+				.add(new Filter("PRI_CODE", Operator.LIKE, "APP_%"))
+				.add(new Filter("PRI_STAGE", Operator.EQUALS, "SHORTLISTED"))
+				.add(new Filter("PRI_DISABLED", false))
+
+				/*
+				 * .addFilter("PRI_INTERN_CODE.LNK_COMP_INTERNSHIP",
+				 * SearchEntity.StringFilter.EQUAL, "[\"SEL_DIGITAL_JOBS\"]")
+				 */
+
+				/* .addColumn("PRI_INTERN_NAME", "Name") */
+				/* .addColumn("PRI_ASSOC_HC", "Host Company") */
+				/* .addColumn("PRI_TITLE", "Internship") */
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "PRI_NAME", "Name"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "LNK_HOST_COMPANY", "PRI_NAME", "Host Company"))
+				.add(new AssociatedColumn("LNK_INTERNSHIP", "PRI_NAME", "Internship"))
+				.add(new AssociatedColumn("LNK_EDU_PROVIDER", "PRI_NAME", "Education Provider"))
+
+				.add(new Column("PRI_INTERN_EMAIL", "Email"))
+				.add(new Column("PRI_ASSOC_INDUSTRY", "Industry"))
+				.add(new Column("PRI_ASSOC_OCCUPATION", "Occupation"))
+				.add(new Column("PRI_ASSOC_EP", "Edu Provider"))
+				.add(new Column("PRI_ADDRESS_FULL", "Address"))
+				.add(new Column("PRI_TRANSPORT", "Transport"))
+				.add(new Column("PRI_INTERN_MOBILE", "Mobile"))
+
+				.add(new Column("PRI_STATUS_COLOR", " "))
+				.add(new Column("PRI_IMAGE_URL", " "))
+				.add(new Column("PRI_IMAGE_SECONDARY", " "))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_NAME", "Agent Name"))
+				.add(new AssociatedColumn("PRI_INTERN_CODE", "LNK_AGENT", "PRI_IMAGE_URL", "Agent Image"))
+				.add(new AssociatedColumn("LNK_COMP_INTERNSHIP", "PRI_COLOUR", "Completing Internship Type Colour"))
+
+				/* Wildcard blacklist */
+				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
+				/* .addBlacklist("PRI_BASE_LEARNING_OUTCOMES") */
+
+				/* Wildcard Whitelisted Attributes */
+				.addWhitelist("PRI_NAME")
+
+				// .setDisplayMode("CARD:MAIN_3")
+				/* Actions */
+				.add(new Action("PRI_EVENT_INTERVIEW_APPLICATION", "Schedule an Interview"))
+				.add(new Action("PRI_EVENT_ACCESS_NOTES_APPLICATION", "Access Notes"))
+				.add(new Action("PRI_EVENT_VIEW", "View Intern Profile"))
+				.add(new Action("PRI_EVENT_VIEW_APPLICATION", "View Internship Summary"))
+				.add(new Action("PRI_EVENT_EDIT_APPLICATION", "Edit Internship Summary"))
+				.add(new Action("PRI_EVENT_ON_HOLD_APPLICATION", "On Hold"))
+				.add(new Action("PRI_EVENT_REJECT_APPLICATION", "Reject"))
+				.add(new Action("PRI_EVENT_WITHDRAW_APPLICATION", "Withdraw"))
+				.setCachable(true)
+				.setWildcardDepth(2)
+				.setPageStart(0)
+				.setPageSize(GennySettings.defaultBucketSize());
+
+		searchBE.setRealm(realm);
+		CacheUtils.putObject(realm, searchBE.getCode(), searchBE);
+
+		return searchBE;
+	}
+
+	private static void cacheDropdown(String definitionCode, SearchEntity entity) {
+		entity.setRealm(PRODUCT_CODE);
+		String key = new StringBuilder(definitionCode).append(":").append(entity.getCode()).toString();
+		CacheUtils.putObject(PRODUCT_CODE, key, entity);
 	}
 
 }

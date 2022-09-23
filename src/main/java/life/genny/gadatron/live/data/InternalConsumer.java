@@ -10,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.Operator;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.jboss.logging.Logger;
 import org.kie.api.runtime.KieRuntimeBuilder;
@@ -17,20 +18,18 @@ import org.kie.api.runtime.KieSession;
 
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.reactive.messaging.annotations.Blocking;
+import life.genny.gadatron.cache.RoleCaching;
+import life.genny.gadatron.search.SearchCaching;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
+import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.serviceq.Service;
 import life.genny.serviceq.intf.GennyScopeInit;
-import life.genny.gadatron.cache.RoleCaching;
-import life.genny.gadatron.search.SearchCaching;
-import life.genny.gadatron.utils.FilterUtils;
 import life.genny.kogito.common.service.SearchService;
 import life.genny.qwandaq.constants.GennyConstants;
 import static life.genny.kogito.common.service.SearchService.SearchOptions;
-import life.genny.qwandaq.entity.SearchEntity.StringFilter;
-import life.genny.qwandaq.entity.SearchEntity.Filter;
-
+import life.genny.gadatron.utils.FilterUtils;
 import java.time.LocalDateTime;
 
 @ApplicationScoped
@@ -159,8 +158,8 @@ public class InternalConsumer {
 					String lastSuffix = filterUtils.getLastSuffixCodeByFilterValue(value);
 					searchService.sendFilterGroup(targetCode, GennyConstants.QUE_FILTER_GRP, lastSuffix, true);
 				} else if (attrCode.equalsIgnoreCase(GennyConstants.SEARCH_TEXT)) {
-					attrCode = GennyConstants.PRI_NAME;
-					attrName = SearchEntity.StringFilter.LIKE.toString();
+					attrCode = Attribute.PRI_NAME;
+					attrName = Operator.LIKE.toString();
 					value = "%" + value.replaceFirst("!", "") + "%";
 					List<String> targetCodes = (List) attrMap.get(GennyConstants.TARGETCODES);
 
@@ -251,11 +250,11 @@ public class InternalConsumer {
 				searchService.sendFilterGroup(sbeCode, GennyConstants.QUE_FILTER_GRP, question, true);
 
 				if (isDateTime) {
-					Filter operator = filterUtils.getFilterOperatorByFilterVal(attrName);
+					Operator operator = filterUtils.getFilterOperatorByFilterVal(attrName);
 					LocalDateTime localDateTime = filterUtils.parseStringToDate(label);
 					searchService.handleFilterByDateTime(question, attrCode, operator, localDateTime, sbeCode);
 				} else {
-					StringFilter operator = filterUtils.getStringOpertorByFilterVal(attrName);
+					Operator operator = filterUtils.getStringOpertorByFilterVal(attrName);
 					searchService.handleFilterByString(question, attrCode, operator, label, sbeCode);
 				}
 			}
