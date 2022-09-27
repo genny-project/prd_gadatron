@@ -71,7 +71,7 @@ public class InternalConsumer {
 	void onStart(@Observes StartupEvent ev) {
 		service.fullServiceInit();
 		searchCaching.saveToCache(userToken.getRealm());
-		RoleCaching.saveToCache();
+		//RoleCaching.saveToCache();
 	}
 
 	/**
