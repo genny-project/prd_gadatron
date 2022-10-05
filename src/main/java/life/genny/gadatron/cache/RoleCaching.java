@@ -4,8 +4,8 @@ import static life.genny.gadatron.constants.GadatronConstants.ADMIN;
 import static life.genny.gadatron.constants.GadatronConstants.ADMIN_ROLE;
 import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
-import static life.genny.qwandaq.datatype.Capability.CapabilityMode.*;
-import static life.genny.qwandaq.datatype.Capability.PermissionMode.*;
+import static life.genny.qwandaq.datatype.capability.CapabilityMode.*;
+import static life.genny.qwandaq.datatype.capability.PermissionMode.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.attribute.Attribute;
-import life.genny.qwandaq.datatype.Capability;
+import life.genny.qwandaq.datatype.capability.CapabilityNode;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.managers.capabilities.CapabilitiesManager;
 import life.genny.qwandaq.managers.capabilities.role.RoleBuilder;
@@ -45,7 +45,7 @@ public class RoleCaching {
 		// admin role
 		BaseEntity admin = new RoleBuilder(ADMIN_ROLE, "Admin", PRODUCT_CODE)
 			.setCapabilityMap(capabilities)
-			.addCapability(ADMIN, new Capability(VIEW, ALL), new Capability(ADD, ALL), new Capability(EDIT, ALL))
+			.addCapability(ADMIN, new CapabilityNode(VIEW, ALL), new CapabilityNode(ADD, ALL), new CapabilityNode(EDIT, ALL))
 
 			// Views addView(capabilityCode) == addCapability(capabilityCode, VIEW)
 			.build();
@@ -57,7 +57,7 @@ public class RoleCaching {
 			{ADMIN, "Manipulate Admin"},
 		};
 
-		return capMan.getCapabilityMap(PRODUCT_CODE, attribData);
+		return capMan.getCapabilityAttributeMap(PRODUCT_CODE, attribData);
 	}
 
 	// Leaving this here in case we want to further test roles
