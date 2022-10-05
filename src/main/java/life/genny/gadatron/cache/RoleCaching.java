@@ -4,10 +4,12 @@ import static life.genny.gadatron.constants.GadatronConstants.ADMIN;
 import static life.genny.gadatron.constants.GadatronConstants.ADMIN_ROLE;
 import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
-import static life.genny.qwandaq.datatype.Capability.CapabilityMode.*;
-import static life.genny.qwandaq.datatype.Capability.PermissionMode.*;
+import static life.genny.qwandaq.datatype.capability.CapabilityMode.*;
+
+import static life.genny.qwandaq.datatype.capability.PermissionMode.*;
 
 import java.lang.invoke.MethodHandles;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -16,11 +18,17 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.attribute.Attribute;
-import life.genny.qwandaq.datatype.Capability;
+import life.genny.qwandaq.datatype.capability.CapabilityNode;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.Filter;
+import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.managers.capabilities.CapabilitiesManager;
 import life.genny.qwandaq.managers.capabilities.role.RoleBuilder;
+import life.genny.qwandaq.managers.capabilities.role.RoleManager;
 import life.genny.qwandaq.utils.BaseEntityUtils;
+import life.genny.qwandaq.utils.DatabaseUtils;
+import life.genny.qwandaq.utils.SearchUtils;
 
 @ApplicationScoped
 public class RoleCaching {
@@ -33,59 +41,53 @@ public class RoleCaching {
 	@Inject
 	CapabilitiesManager capMan;
 
-	/*
-	 * Return a list of the roles (for testing)
-	 */
-	public void saveToCache() {
+	@Inject
+	RoleManager roleManager;
 
-		// Not keen on storing this map for longer than we have to
-		// Get capabilities
+	@Inject
+	SearchUtils searchUtils;
+
+	static final String productCode = "Gadatron";
+
+	public void saveToCache() {
 		Map<String, Attribute> capabilities = loadCapabilityAttributes();
 
 		// admin role
 		BaseEntity admin = new RoleBuilder(ADMIN_ROLE, "Admin", PRODUCT_CODE)
-			.setCapabilityMap(capabilities)
-			.addCapability(ADMIN, new Capability(VIEW, ALL), new Capability(ADD, ALL), new Capability(EDIT, ALL))
+				.setCapabilityMap(capabilities)
+				.addCapability(ADMIN, new CapabilityNode(VIEW, ALL), new CapabilityNode(ADD, ALL),
+						new CapabilityNode(EDIT, ALL))
 
-			// Views addView(capabilityCode) == addCapability(capabilityCode, VIEW)
-			.build();
+				// Views addView(capabilityCode) == addCapability(capabilityCode, VIEW)
+				.build();
 
+		// Set TestUser
+		// fetch he baseentity for the user with email testuser@gada.io
+		SearchEntity searchEntity = new SearchEntity("SBE_EMAIL", "Search for Email")
+				.add(new Filter(Attribute.PRI_CODE, Operator.LIKE, "PER_%"))
+				.add(new Filter("PRI_EMAIL", Operator.EQUALS, "testuser_gada.io"))
+				.setPageStart(0)
+				.setPageSize(100);
+
+		searchEntity.setRealm(productCode);
+
+		List<BaseEntity> bes = searchUtils.searchBaseEntitys(searchEntity);
+		BaseEntity testUserBE = null;
+
+		if ((bes != null) && (bes.size() > 0)) {
+			testUserBE = bes.get(0);
+		} else {
+			log.error("No test User - testuser@gada.io found!");
+		}
+		// add the admin role to the user
+		roleManager.attachRole(testUserBE, "ADMIN");
 	}
 
 	private Map<String, Attribute> loadCapabilityAttributes() {
 		String[][] attribData = {
-			{ADMIN, "Manipulate Admin"},
+				{ ADMIN, "Manipulate Admin" },
 		};
 
-		return capMan.getCapabilityMap(PRODUCT_CODE, attribData);
+		return capMan.getCapabilityAttributeMap(PRODUCT_CODE, attribData);
 	}
-
-	// Leaving this here in case we want to further test roles
-	//
-	// public void testRoles(List<BaseEntity> roles) {
-	// 	BaseEntity admin = roles.get(0);
-	// 	BaseEntity tenant = roles.get(1);
-		
-	// 	testRoleCap(admin, "CAP_ADMIN", false, VIEW);
-	// 	testRoleCap(admin, "CAP_TENANT", false, ADD);
-	// 	testRoleCap(admin, "CAP_ADMIN", false, EDIT);
-	// 	testRoleCap(admin, "CAP_" + PROPERTY_VIEW, true, ADD, VIEW, EDIT);
-	// 	testRoleCap(admin, "CAP_ADMIN", true, VIEW, ADD, EDIT, DELETE);
-	// 	testRoleCap(admin, "CAP_ADMIN", false, VIEW, ADD, EDIT, DELETE);
-	// }
-
-	// private boolean testRoleCap(BaseEntity be, String rawAttr, boolean hasAll, CapabilityMode... modes) {
-	// 	log.info("Test: " + be.getCode() + " has " + (hasAll ? "all " : "") + rawAttr + ": " + capMan.getModeString(modes));
-	// 	boolean result;
-	// 	try {
-	// 		result = capMan.roleHasCapability(be, rawAttr, hasAll, modes);
-	// 		log.info("		- Result: " + result);
-	// 		return result;
-	// 	} catch (RoleException e) {
-	// 		// TODO Auto-generated catch block
-	// 		e.printStackTrace();
-	// 	}
-	// 	return false;
-	// }
-
 }
