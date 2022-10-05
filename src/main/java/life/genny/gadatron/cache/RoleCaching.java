@@ -51,8 +51,8 @@ public class RoleCaching {
 
 		// admin role
 		BaseEntity admin = new RoleBuilder(ADMIN_ROLE, "Admin", PRODUCT_CODE)
-			.setCapabilityMap(capabilities)
-			.addCapability(ADMIN).view(ALL).add(ALL).edit(ALL).build()
+				.setCapabilityMap(capabilities)
+				.addCapability(ADMIN).view(ALL).add(ALL).edit(ALL).build()
 
 				// Views addView(capabilityCode) == addCapability(capabilityCode, VIEW)
 				.build();
@@ -72,6 +72,7 @@ public class RoleCaching {
 
 		if ((bes != null) && (bes.size() > 0)) {
 			testUserBE = bes.get(0);
+			testUserBE = beUtils.getBaseEntity(productCode, testUserBE.getCode());
 		} else {
 			log.error("No test User - testuser@gada.io found!");
 		}
