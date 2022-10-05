@@ -65,7 +65,7 @@ public class RoleCaching {
 		// fetch he baseentity for the user with email testuser@gada.io
 		SearchEntity searchEntity = new SearchEntity("SBE_EMAIL", "Search for Email")
 				.add(new Filter(Attribute.PRI_CODE, Operator.LIKE, "PER_%"))
-				.add(new Filter("PRI_EMAIL", Operator.EQUALS, "testuser_gada.io"))
+				.add(new Filter("PRI_EMAIL", Operator.EQUALS, "testuser@gada.io"))
 				.setPageStart(0)
 				.setPageSize(100);
 
