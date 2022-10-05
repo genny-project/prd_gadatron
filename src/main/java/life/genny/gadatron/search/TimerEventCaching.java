@@ -65,6 +65,10 @@ public class TimerEventCaching {
 				"Person Warning", HOURS_24,
 				new AttributeCodeValueString("PRI_PQ_STAGE", "ORANGE"));
 
+		createTimerEventBE(personDef,
+				QUE_ADD_APPLICATION_GRP, "PERSON_DANGER",
+				"Person Danger", HOURS_48,
+				new AttributeCodeValueString("PRI_PQ_STAGE", "RED"));
 	}
 
 	/**
