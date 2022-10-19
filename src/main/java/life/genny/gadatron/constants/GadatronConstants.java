@@ -1,6 +1,6 @@
 package life.genny.gadatron.constants;
 
-import static life.genny.qwandaq.constants.GennyConstants.ROLE_BE_PREFIX;
+import life.genny.qwandaq.constants.Prefix;
 
 public class GadatronConstants {
 
@@ -12,6 +12,6 @@ public class GadatronConstants {
 	public static final String ADMIN = "ADMIN";
 
 	// rolesV
-	public static final String ADMIN_ROLE = ROLE_BE_PREFIX.concat(ADMIN);
+	public static final String ADMIN_ROLE = Prefix.ROL.concat(ADMIN);
 
 }
