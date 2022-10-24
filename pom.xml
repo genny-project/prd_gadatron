@@ -48,17 +48,18 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
       <version>${kogito.version}</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.kie/efesto-common-api -->
+    https://mvnrepository.com/artifact/org.kie/efesto-common-api
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>efesto-common-api</artifactId>
       <version>8.28.0.Beta</version>
    </dependency>
+   -->
 
   </dependencies>
   <build>
