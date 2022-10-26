@@ -1,6 +1,6 @@
 #!/bin/bash
 cp -rp ../../gennyq/docker/* src/main/docker/
-PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+PROJECT_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
 project=`echo "${PWD##*/}" | tr '[:upper:]' '[:lower:]'`
 file="src/main/resources/${project}-git.properties"
 org=gennyproject

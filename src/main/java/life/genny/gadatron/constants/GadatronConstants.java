@@ -14,5 +14,4 @@ public class GadatronConstants {
 	// rolesV
 	public static final String ADMIN_ROLE = ROLE_BE_PREFIX.concat(ADMIN);
 
-
 }
