@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import life.genny.qwandaq.EEntityStatus;
-import life.genny.qwandaq.attribute.AttributeInteger;
+import life.genny.qwandaq.attribute.Attribute;
+import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.models.GennySettings;
 import org.jboss.logging.Logger;
 
@@ -304,7 +305,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -361,7 +362,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -434,7 +435,7 @@ public class SearchCaching {
 
 				.setPageStart(0).setPageSize(30);
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -464,7 +465,7 @@ public class SearchCaching {
 				.setPageStart(0)
 				.setPageSize(1000);
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -508,7 +509,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -567,7 +568,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -617,7 +618,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -700,7 +701,7 @@ public class SearchCaching {
 				.setWildcardDepth(1)
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
@@ -738,7 +739,7 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize());
 
-		AttributeInteger priIndex = new AttributeInteger("PRI_INDEX", "PRI_INDEX");
+		Attribute priIndex = new Attribute("PRI_INDEX", "PRI_INDEX", new DataType(Integer.class));
 		searchBE.addAttribute(priIndex, 1.0, 1);
 
 		searchBE.setRealm(realm);
