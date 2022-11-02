@@ -65,11 +65,19 @@ then
 
 	System.out.println("Payload = "+payload.toString());
 
-	kogitoUtils.triggerWorkflow(SELF,"testQuestionIM2", payload);
+	kogitoUtils.triggerWorkflow(SELF,"testQuestionGT2", payload);
 	retract(msg);
 end
 
 
+rule RouteProfile
+when
+	msg: QEventMessage( data.code matches "QUE_PROFILE")
+	kogitoUtils : KogitoUtils()
+then
+	System.out.println("Displaying Profile ..."+msg.getData().getCode()+" msg="+msg);
+	retract(msg);
+end
 
 
 
