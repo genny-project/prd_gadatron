@@ -10,6 +10,11 @@ services:
         condition: service_healthy
     env_file:
       - ${ENV_FILE}
+    environment:
+      VIRTUAL_HOST: quarkus-gadatron.genny.life
+      VIRTUAL_PORT: ${PRD_GADATRON_PORT}
+      GENNY_KOGITO_SERVICE_URL: http://alyson.genny.life:${PRD_GADATRON_PORT}
+      GENNY_GADAQ_SERVICE_URL: http://alyson.genny.life:${GADAQ_PORT}    
     ports:
       - "${PRD_GADATRON_PORT}:${PRD_GADATRON_INTERNAL_PORT}"
     networks:

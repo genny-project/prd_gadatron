@@ -13,7 +13,7 @@ when
 	userToken: UserToken()
 	kogitoUtils : KogitoUtils()
 then
-    /* do some inferrence stuff idk */
-	System.out.println("Inferring!");
+    /* do some inference stuff idk */
+	System.out.println("Infering!");
 	retract(msg);
 end
