@@ -1,0 +1,122 @@
+package life.genny.gadatron;
+
+import life.genny.qwandaq.message.QEventMessage;
+import life.genny.qwandaq.utils.KafkaUtils;
+import life.genny.kogito.common.utils.KogitoUtils;
+import static life.genny.kogito.common.utils.KogitoUtils.UseService.*;
+import life.genny.qwandaq.models.UserToken;
+import java.util.HashMap;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import life.genny.qwandaq.utils.CommonUtils;
+import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.utils.SearchUtils;
+import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.utils.BaseEntityUtils;
+import life.genny.qwandaq.utils.CacheUtils;
+import life.genny.qwandaq.utils.DefUtils;
+import life.genny.qwandaq.utils.QwandaUtils;
+import life.genny.qwandaq.utils.GraphQLUtils;
+import life.genny.qwandaq.message.QDataBaseEntityMessage;
+import life.genny.qwandaq.attribute.Attribute;
+import life.genny.kogito.common.service.ImportGithubService;
+import life.genny.qwandaq.Answer;
+
+
+ruleflow-group 'EventRoutes'
+
+
+rule RouteTestForm
+when
+	msg: QEventMessage( data.code matches "TESTQ_QUE_.*")
+	userToken: UserToken()
+	kogitoUtils : KogitoUtils()
+	beUtils: BaseEntityUtils()
+	defUtils:	DefUtils()
+	qwandaUtils: QwandaUtils()
+then
+
+	System.out.println("Displaying Test Question Group ..."+msg.getData().getCode()+" msg="+msg);
+
+	
+	JsonObjectBuilder  payloadBuilder = Json.createObjectBuilder()
+		.add("questionCode", msg.getData().getCode().substring("TESTQ_".length()))
+		.add("userCode", userToken.getUserCode())
+		.add("sourceCode", userToken.getUserCode())
+		.add("entityCode", msg.getData().getTargetCode())
+		.add("targetCode", msg.getData().getTargetCode());
+
+		String content = msg.getData().getContent();
+		if (content!=null) {
+			payloadBuilder.add("content", content);
+					
+			System.out.println("Content = "+content);
+			/* Load the LNK_DOT  */
+			
+			BaseEntity target = beUtils.getBaseEntityByCode(msg.getData().getTargetCode());
+			Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+			target.addAnswer(new Answer(target,target,lnkDot, "[\""+content+"\"]"));
+			beUtils.updateBaseEntity(target);
+		}
+	
+	JsonObject payload = payloadBuilder.build();
+
+	System.out.println("Payload = "+payload.toString());
+
+	kogitoUtils.triggerWorkflow(SELF,"testQuestionIM2", payload);
+	retract(msg);
+end
+
+
+
+
+
+rule RouteTable
+when
+	msg: QEventMessage( data.code matches "QUE_TABLE_*")
+	kogitoUtils : KogitoUtils()
+then
+	JsonObjectBuilder builder = Json.createObjectBuilder()
+			.add("code", CommonUtils.removePrefix(msg.getData().getCode()));
+
+	if (msg.getData().getTargetCode() != null)
+		builder.add("targetCode", msg.getData().getTargetCode());
+
+	kogitoUtils.triggerWorkflow(GADAQ, "view", builder.build());
+	retract(msg);
+end
+
+rule RouteBucket
+when
+	msg: QEventMessage(data.code=="QUE_BUCKET_VIEW" || data.code=="QUE_PROCESS")
+	kogitoUtils : KogitoUtils()
+then
+	
+JsonObjectBuilder builder = Json.createObjectBuilder()
+			.add("code", "TAB_BUCKET_VIEW"); 
+
+
+	if (msg.getData().getTargetCode() != null) {
+		builder.add("targetCode", msg.getData().getTargetCode());
+	}
+	System.out.println("RouteTable: " + builder.build().toString());
+
+	kogitoUtils.triggerWorkflow(GADAQ, "view", builder.build());
+
+	retract(msg);
+end
+
+
+/**
+ * Message should be retracted if it has not already been.
+ */
+rule RetractEvent
+salience 0
+when
+	msg: QEventMessage()
+then
+	System.out.println("Retracting message Gadatron");
+	retract(msg);
+end
