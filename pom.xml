@@ -12,7 +12,7 @@
     <enforcer-plugin.version>3.0.0</enforcer-plugin.version>
     <genny.version>${project.version}</genny.version>
     <jar-plugin.version>3.2.2</jar-plugin.version>
-    <kogito.version>1.28.0.Final</kogito.version>
+    <kogito.version>1.29.0.Final</kogito.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.release>11</maven.compiler.release>
     <maven.compiler.source>11</maven.compiler.source>
@@ -21,11 +21,11 @@
     <maven.version>3.8.1</maven.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
-    <quarkus.platform.version>2.13.2.Final</quarkus.platform.version>
+    <quarkus.platform.version>2.13.3.Final</quarkus.platform.version>
     <source-plugin.version>3.2.0</source-plugin.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <version.compiler.plugin>3.0.0-M5</version.compiler.plugin>
-    <version.org.optaplanner>8.28.0.Final</version.org.optaplanner>
+    <version.org.optaplanner>8.29.0.Final</version.org.optaplanner>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -48,20 +48,35 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
-    <!--
     <dependency>
       <groupId>org.kie.kogito</groupId>
       <artifactId>kogito-addons-quarkus-jobs-management</artifactId>
       <version>${kogito.version}</version>
     </dependency>
-    https://mvnrepository.com/artifact/org.kie/efesto-common-api
+    <!-- https://mvnrepository.com/artifact/org.kie/efesto-common-api -->
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>efesto-common-api</artifactId>
-      <version>8.28.0.Beta</version>
+      <version>${version.org.optaplanner}</version>
    </dependency>
-    -->
-
+    <dependency>
+     <groupId>net.java.dev.jna</groupId>
+     <artifactId>jna</artifactId>
+     <version>5.12.1</version>
+     <scope>test</scope>
+    </dependency>
+    <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java-api</artifactId>
+            <version>3.2.13</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java-transport-zerodep</artifactId>
+            <version>3.2.13</version>
+            <scope>test</scope>
+        </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -162,6 +177,19 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>org.elasticsearch:jna</exclude>
+                  </excludes>
+                  <message>org.elasticsearch:jna is incompatible with arm64 / Apple M1, use net.java.dev.jna:jna instead</message>
+                </bannedDependencies>
+              </rules>
+            </configuration>
       </plugin>
       <plugin>
         <groupId>org.kie.kogito</groupId>
