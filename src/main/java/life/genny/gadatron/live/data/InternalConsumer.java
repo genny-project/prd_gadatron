@@ -1,8 +1,9 @@
 package life.genny.gadatron.live.data;
 
+import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
+
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -11,29 +12,21 @@ import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
-import life.genny.qwandaq.entity.SearchEntity;
-import life.genny.qwandaq.entity.search.trait.Operator;
-import life.genny.qwandaq.message.QEventMessage;
-
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.jboss.logging.Logger;
-import org.kie.api.runtime.KieRuntimeBuilder;
-import org.kie.api.runtime.KieSession;
 
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.reactive.messaging.annotations.Blocking;
-import life.genny.gadatron.cache.RoleCaching;
-import life.genny.gadatron.route.Events;
-import life.genny.gadatron.search.SearchCaching;
 import life.genny.kogito.common.utils.KogitoUtils;
+import life.genny.gadatron.cache.RoleCaching;
+import life.genny.gadatron.cache.SearchCaching;
+import life.genny.gadatron.route.Events;
 import life.genny.qwandaq.Answer;
-import life.genny.qwandaq.attribute.Attribute;
+import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.utils.SecurityUtils;
 import life.genny.serviceq.Service;
 import life.genny.serviceq.intf.GennyScopeInit;
-import life.genny.kogito.common.service.SearchService;
-import life.genny.qwandaq.constants.GennyConstants;
-import java.time.LocalDateTime;
 
 @ApplicationScoped
 public class InternalConsumer {
@@ -43,26 +36,15 @@ public class InternalConsumer {
 
 	@Inject
 	Service service;
-
 	@Inject
 	GennyScopeInit scope;
-
 	@Inject
 	UserToken userToken;
 
 	@Inject
 	KogitoUtils kogitoUtils;
-
 	@Inject
-	KieRuntimeBuilder kieRuntimeBuilder;
-
-	@Inject
-	SearchCaching searchCaching;
-
-	KieSession ksession;
-
-	@Inject
-	SearchService searchService;
+	RoleCaching roleCaching;
 
 	@Inject
 	Events events;
@@ -74,12 +56,12 @@ public class InternalConsumer {
 	 */
 	void onStart(@Observes StartupEvent ev) {
 		service.fullServiceInit();
-		searchCaching.saveToCache(userToken.getRealm());
-		//RoleCaching.saveToCache();
+		SearchCaching.saveToCache();
+		roleCaching.saveToCache();
 	}
 
 	/**
-	 * Consume data messages.
+	 * Consume from the lojing data topic.
 	 *
 	 * @param data The incoming data
 	 */
@@ -91,14 +73,20 @@ public class InternalConsumer {
 		scope.init(data);
 
 		// ensure the message is for this service
-		if (!"gadatron".equals(userToken.getProductCode())) {
+		if (!PRODUCT_CODE.equals(userToken.getProductCode())) {
 			scope.destroy();
+			// log duration
+			Instant end = Instant.now();
+			log.info("Duration = " + Duration.between(start, end).toMillis() + "ms");
 			return;
 		}
 
 		// process data using inference
 		List<Answer> answers = kogitoUtils.runDataInference(data);
 		kogitoUtils.funnelAnswers(answers);
+
+		// TODO: Do we need to save answers here?
+
 		scope.destroy();
 
 		// log duration
@@ -107,7 +95,7 @@ public class InternalConsumer {
 	}
 
 	/**
-	 * Consume event messages.
+	 * Consume from the lojing events topic.
 	 *
 	 * @param event The incoming event
 	 */
@@ -128,12 +116,16 @@ public class InternalConsumer {
 			e.printStackTrace();
 			return;
 		}
+
+		log.info("Received Event : " + SecurityUtils.obfuscate(event));
+
+		// If the event is a Dropdown then leave it for DropKick
+		if ("DD".equals(msg.getEvent_type())) {
+			return;
+		}
 		events.route(msg);
 		scope.destroy();
-
-		// log duration
 		Instant end = Instant.now();
 		log.info("Duration = " + Duration.between(start, end).toMillis() + "ms");
 	}
-
 }
