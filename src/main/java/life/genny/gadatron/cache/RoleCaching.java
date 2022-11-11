@@ -4,7 +4,8 @@ import static life.genny.gadatron.constants.GadatronConstants.ADMIN;
 import static life.genny.gadatron.constants.GadatronConstants.ADMIN_ROLE;
 import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
-import static life.genny.qwandaq.datatype.capability.PermissionMode.*;
+//import static life.genny.qwandaq.datatype.capability.PermissionMode.*;
+import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
