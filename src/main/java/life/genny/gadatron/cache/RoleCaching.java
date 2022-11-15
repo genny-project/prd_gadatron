@@ -4,7 +4,7 @@ import static life.genny.gadatron.constants.GadatronConstants.ADMIN;
 import static life.genny.gadatron.constants.GadatronConstants.ADMIN_ROLE;
 import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
-import static life.genny.qwandaq.datatype.capability.PermissionMode.*;
+import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.*;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -24,7 +24,6 @@ import life.genny.qwandaq.managers.capabilities.CapabilitiesManager;
 import life.genny.qwandaq.managers.capabilities.role.RoleBuilder;
 import life.genny.qwandaq.managers.capabilities.role.RoleManager;
 import life.genny.qwandaq.utils.BaseEntityUtils;
-import life.genny.qwandaq.utils.DatabaseUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 
 @ApplicationScoped
@@ -73,11 +72,11 @@ public class RoleCaching {
 		if ((bes != null) && (bes.size() > 0)) {
 			testUserBE = bes.get(0);
 			testUserBE = beUtils.getBaseEntity(productCode, testUserBE.getCode());
+			// add the admin role to the user
+			roleManager.attachRole(testUserBE, "ADMIN");
 		} else {
 			log.error("No test User - testuser@gada.io found!");
 		}
-		// add the admin role to the user
-		roleManager.attachRole(testUserBE, "ADMIN");
 	}
 
 	private Map<String, Attribute> loadCapabilityAttributes() {
