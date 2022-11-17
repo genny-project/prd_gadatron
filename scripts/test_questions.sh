@@ -1,7 +1,7 @@
 #!/bin/bash
 productCode=${1:-gadatron}
 questionCode=${2:-QUE_USER_DETAILS_GRP}
-targetCode=${3:-PER_36ADBD2B-6D85-478B-A144-B7552777F69B}
+targetCode=${3:-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4}
 sourceCode=PER_0F6169E1-FDD5-4DAF-BEC3-4126C6626752
 TOKEN=`./gettoken-cache.sh ${productCode}`
 echo $TOKEN
