@@ -43,7 +43,7 @@ public class RoleCaching {
 	@Inject
 	SearchUtils searchUtils;
 
-	static final String productCode = "Gadatron";
+	static final String productCode = "gadatron";
 
 	public void saveToCache() {
 		Map<String, Attribute> capabilities = loadCapabilityAttributes();
