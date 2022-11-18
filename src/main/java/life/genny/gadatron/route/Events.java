@@ -1,19 +1,5 @@
 package life.genny.gadatron.route;
 
-import static life.genny.kogito.common.utils.KogitoUtils.UseService.SELF;
-
-import java.lang.invoke.MethodHandles;
-
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
-import org.jboss.logging.Logger;
-
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
@@ -23,6 +9,17 @@ import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import java.lang.invoke.MethodHandles;
+
+import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
+import static life.genny.kogito.common.utils.KogitoUtils.UseService.SELF;
 
 /**
  * Events
@@ -113,7 +110,35 @@ public class Events {
 			System.out.println("Payload = " + payload.toString());
 
 			kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
-			return;
+		}
+
+		if (code.startsWith("GADA_WAYAN_")) {
+			log.info("Displaying GADA_WAYAN_ Test Question Group ..." + msg.getData().getCode() + " msg=" + msg);
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", msg.getData().getCode().substring("GADA_WAYAN_".length()))
+					.add("userCode", userToken.getUserCode())
+					.add("sourceCode", userToken.getUserCode())
+					.add("entityCode", msg.getData().getTargetCode())
+					.add("targetCode", msg.getData().getTargetCode());
+
+			String content = msg.getData().getContent();
+			if (content != null) {
+				payloadBuilder.add("content", content);
+
+				log.info("Content = " + content);
+				/* Load the LNK_DOT */
+
+				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
+				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
+				beUtils.updateBaseEntity(PRODUCT_CODE, target);
+			}
+
+			JsonObject payload = payloadBuilder.build();
+
+			log.info("Payload = " + payload.toString());
+
+			kogitoUtils.triggerWorkflow(SELF, "testWayan", payload);
 		}
 
 	}

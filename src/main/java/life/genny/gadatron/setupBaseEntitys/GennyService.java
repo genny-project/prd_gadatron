@@ -19,8 +19,6 @@ import life.genny.qwandaq.utils.SearchUtils;
 import life.genny.qwandaq.utils.DatabaseUtils;
 
 import life.genny.qwandaq.models.ServiceToken;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.processor.BeanArchives;
 
 @ApplicationScoped
 public class GennyService {

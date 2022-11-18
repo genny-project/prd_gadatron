@@ -5,7 +5,7 @@ targetCode=${3:-PER_949F7C8B-7F7F-4505-BDF7-117C3F1231EC}
 sourceCode=-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4
 TOKEN=`./gettoken-cache.sh ${productCode}`
 echo $TOKEN
-payload="{\"data\":{\"sourceCode\":\"${sourceCode}\",\"targetCode\":\"${targetCode}\",\"code\":\"TESTQ_${questionCode}\"},\"token\":\"${TOKEN}\",\"msg_type\":\"EVT_MSG\"}"
+payload="{\"data\":{\"sourceCode\":\"${sourceCode}\",\"targetCode\":\"${targetCode}\",\"code\":\"GADA_WAYAN_${questionCode}\"},\"token\":\"${TOKEN}\",\"msg_type\":\"EVT_MSG\"}"
 echo $payload
 echo  $payload > event.json
 
