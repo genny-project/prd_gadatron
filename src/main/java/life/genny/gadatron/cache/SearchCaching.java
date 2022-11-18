@@ -12,7 +12,7 @@ import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.models.GennySettings;
 import org.jboss.logging.Logger;
 
-import life.genny.qwandaq.entity.SearchEntity;
+import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Action;
 import life.genny.qwandaq.entity.search.trait.Column;
 import life.genny.qwandaq.entity.search.trait.AssociatedColumn;

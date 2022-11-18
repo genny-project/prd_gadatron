@@ -12,6 +12,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import life.genny.gadatron.service.BalService;
 import org.jboss.logging.Logger;
 
 import life.genny.kogito.common.utils.KogitoUtils;
@@ -43,6 +44,9 @@ public class Events {
 
 	@Inject
 	BaseEntityUtils beUtils;
+
+	@Inject
+	BalService balService;
 
 	/**
 	 * @param msg
@@ -113,6 +117,39 @@ public class Events {
 			System.out.println("Payload = " + payload.toString());
 
 			kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+			return;
+		}
+
+		// test question event
+		if (code.startsWith("GADA_TAZ_CREATE_PER")) {
+			log.info("Creating Taz Person ..." + msg.getData().getCode() + " msg=" + msg);
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_CREATE_PER".length()))
+					.add("userCode", userToken.getUserCode())
+					.add("sourceCode", userToken.getUserCode())
+					.add("entityCode", msg.getData().getTargetCode())
+					.add("targetCode", msg.getData().getTargetCode());
+
+			String content = msg.getData().getContent();
+			if (content != null) {
+				payloadBuilder.add("content", content);
+
+				System.out.println("Content = " + content);
+				/* Load the LNK_DOT */
+
+//				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
+//				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+//				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
+//				beUtils.updateBaseEntity(PRODUCT_CODE, target);
+
+			}
+
+			JsonObject payload = payloadBuilder.build();
+
+			System.out.println("Payload = " + payload.toString());
+
+//			kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+			balService.createPersonBal("DEF_PERSON", content);
 			return;
 		}
 
