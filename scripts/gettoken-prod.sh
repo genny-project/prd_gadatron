@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 realm=`echo $GENNY_KEYCLOAK_REALM`
-username=`echo $TEST_USER_NAME`
-password=`echo $TEST_USER_PASSWORD`
+username=`echo $GENNY_TEST_USERNAME`
+password=`echo $GENNY_TEST_PASSWORD`
 clientid=`echo $GENNY_CLIENT_ID`
 secret=`echo $GENNY_CLIENT_SECRET`
 keycloakurl=`echo $GENNY_KEYCLOAK_URL`
 
 #echo "realm=$realm"
-#echo "keycloakurl=$keycloakurl"
+##echo "keycloakurl=$keycloakurl"
 #echo "clientid=$clientid"
 #echo "secret=$secret"
 #echo "username=$username"

@@ -123,7 +123,7 @@ public class Events {
 		// test question event
 		if (code.startsWith("GADA_TAZ_CREATE_PER")) {
 			log.info("Creating Taz Person ..." + msg.getData().getCode() + " msg=" + msg);
-			
+
 			// BUILD JSON PAYLOAD CONTENT
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
 					.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_CREATE_PER".length()))
@@ -152,7 +152,7 @@ public class Events {
 			balService.createPersonBal("DEF_PERSON", content);
 			return;
 		}
-	
+
 		if (code.startsWith("GADA_TAZ_BPMN_TST")) {
 			log.info("Calling BPMN File ..." + msg.getData().getCode() + " msg=" + msg);
 
@@ -171,5 +171,39 @@ public class Events {
 			return;
 		}
 
+		// test question eventIrvan
+				if (code.startsWith("GADA_IRVAN")) {
+					log.info("Irvan Listener ..." + msg.getData().getCode() + " msg=" + msg);
+					JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+							.add("questionCode", msg.getData().getCode().substring("GADA_IRVAN".length()))
+							.add("userCode", userToken.getUserCode())
+							.add("sourceCode", userToken.getUserCode())
+							.add("entityCode", msg.getData().getTargetCode())
+							.add("targetCode", msg.getData().getTargetCode());
+
+					String content = msg.getData().getContent();
+					if (content != null) {
+						payloadBuilder.add("content", content);
+
+						System.out.println("Content = " + content);
+						/* Load the LNK_DOT */
+
+						BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
+						Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+						target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
+						beUtils.updateBaseEntity(PRODUCT_CODE, target);
+
+					}
+
+					JsonObject payload = payloadBuilder.build();
+
+					System.out.println("Payload = " + payload.toString());
+
+					kogitoUtils.triggerWorkflow(SELF, "testQuestionIrvan", payload);
+					return;
+				}
+
+
 	}
+
 }
