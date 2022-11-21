@@ -79,8 +79,15 @@ public class IrvanService {
                 log.info(value);
                 BaseEntity defBE = beUtils.getBaseEntity(defcode);
                 BaseEntity be = beUtils.create(defBE, value);
+//                qwandaUtils.saveAnswer(new Answer(userToken.userCode, be.getCode(), "PRI_FIRSTNAME",  ))
+                be = beUtils.addValue(be, "PRI_EMAIL", "another@mail.com");
+                beUtils.updateBaseEntity(be);
                 log.info(be);
         }
+        
+//        public void createAnswerIrvan() {
+//        	BaseEntity be
+//        }
 
         public void createTestMsg() {
                 // MSG_IM_INTERN_APPLIED

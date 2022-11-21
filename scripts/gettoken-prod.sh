@@ -8,7 +8,7 @@ secret=`echo $GENNY_CLIENT_SECRET`
 keycloakurl=`echo $GENNY_KEYCLOAK_URL`
 
 #echo "realm=$realm"
-#echo "keycloakurl=$keycloakurl"
+##echo "keycloakurl=$keycloakurl"
 #echo "clientid=$clientid"
 #echo "secret=$secret"
 #echo "username=$username"
