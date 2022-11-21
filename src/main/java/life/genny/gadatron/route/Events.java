@@ -1,5 +1,7 @@
 package life.genny.gadatron.route;
 
+import com.google.common.reflect.TypeToken;
+import life.genny.gadatron.service.WayanService;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
@@ -16,7 +18,10 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.lang.invoke.MethodHandles;
+import java.util.Map;
 
 import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 import static life.genny.kogito.common.utils.KogitoUtils.UseService.SELF;
@@ -40,6 +45,9 @@ public class Events {
 
 	@Inject
 	BaseEntityUtils beUtils;
+
+	@Inject
+	WayanService wayanService;
 
 	/**
 	 * @param msg
@@ -120,25 +128,48 @@ public class Events {
 					.add("sourceCode", userToken.getUserCode())
 					.add("entityCode", msg.getData().getTargetCode())
 					.add("targetCode", msg.getData().getTargetCode());
-
 			String content = msg.getData().getContent();
-			if (content != null) {
-				payloadBuilder.add("content", content);
 
-				log.info("Content = " + content);
-				/* Load the LNK_DOT */
+			if (code.endsWith("ADD_PERSON")) {
+				if (content != null) {
+					log.info("Content = " + content);
 
-				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
-				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
-				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
-				beUtils.updateBaseEntity(PRODUCT_CODE, target);
+					if (content.startsWith("\"{") && content.endsWith("}\"")) {
+						/* Load the LNK_DOT */
+
+						BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
+						Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+						target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
+						beUtils.updateBaseEntity(PRODUCT_CODE, target);
+
+						Jsonb jsonb = JsonbBuilder.create();
+						Map<String, String> mContent = jsonb.fromJson(content, new TypeToken<Map<String, String>>() {
+						}.getType());
+						String beCode = wayanService.createAPerson(mContent);
+						if (beCode != null) {
+							log.info("created person is :" + beCode);
+							payloadBuilder.remove("targetCode");
+							payloadBuilder.remove("entityCode");
+							payloadBuilder.add("targetCode", beCode);
+							payloadBuilder.add("entityCode", beCode);
+						}
+					} else {
+						payloadBuilder.add("content", content);
+						JsonObject payload = payloadBuilder.build();
+						kogitoUtils.triggerWorkflow(SELF, "testWayan", payload);
+					}
+				}
+			} else {
+				if (content != null) {
+					payloadBuilder.add("content", content);
+				}
+
+				JsonObject payload = payloadBuilder.build();
+				log.info("Payload = " + payload.toString());
+
+				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
 			}
 
-			JsonObject payload = payloadBuilder.build();
-
-			log.info("Payload = " + payload.toString());
-
-			kogitoUtils.triggerWorkflow(SELF, "testWayan", payload);
 		}
 
 	}
