@@ -1,12 +1,16 @@
-package life.genny.gadatron.testing;
+package life.genny.gadatron.service;
 
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
+import io.quarkus.runtime.StartupEvent;
+import life.genny.qwandaq.models.ServiceToken;
 import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.EEntityStatus;
@@ -20,16 +24,28 @@ import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 
 @ApplicationScoped
-public class TestServiceImpl implements TestService {
+public class BalService {
 
-        static final Logger log = Logger.getLogger(TestServiceImpl.class);
+        static final Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
         static Jsonb jsonb = JsonbBuilder.create();
 
+        // TO-DO
+        // get product code from git properties
+        // set to be dynamic
+        //
         static final String productCode = "gadatron";
 
+        // TO-DO
+        // Try to use Service User Token
+        // Available on start
+        // STEAL IT!!!
+        //
         @Inject
         UserToken userToken;
+        // vvvvvvvvvvvvvvvvvvvvvvv
+        @Inject
+        ServiceToken serviceToken;
 
         @Inject
         QwandaUtils qwandaUtils;
@@ -40,6 +56,13 @@ public class TestServiceImpl implements TestService {
         @Inject
         SearchUtils searchUtils;
 
+        void onStart(@Observes StartupEvent ev) {
+                //service.fullServiceInit();
+                //log.info(MethodHandles.lookup().lookupClass() + ' init');
+                log.info("Bal Service init");
+//                createPersonBal("DEF_PERSON", "firstname");
+        }
+
         public BaseEntity getTestBaseEntity(String beCode) {
                 BaseEntity be = beUtils.getBaseEntityOrNull(beCode);
                 return be;
@@ -48,6 +71,12 @@ public class TestServiceImpl implements TestService {
         public String getTestBaseEntityJson(String beCode) {
                 BaseEntity be = beUtils.getBaseEntityOrNull(beCode);
                 return jsonb.toJson(be);
+        }
+
+        // Function to be called from shell scripts
+        public void createPersonBal(String defcode, String value) {
+                log.info(defcode);
+                log.info(value);
         }
 
         public void createTestMsg() {
