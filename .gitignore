@@ -40,4 +40,4 @@ nb-configuration.xml
 # Local environment
 .env
 **/event.json
-scripts/content2.txt
+scripts/**.txt

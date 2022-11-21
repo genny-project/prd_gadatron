@@ -153,6 +153,10 @@ public class Events {
 							payloadBuilder.add("targetCode", beCode);
 							payloadBuilder.add("entityCode", beCode);
 						}
+
+						JsonObject payload = payloadBuilder.build();
+						log.info("Payload = " + payload.toString());
+						kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
 					} else {
 						payloadBuilder.add("content", content);
 						JsonObject payload = payloadBuilder.build();
