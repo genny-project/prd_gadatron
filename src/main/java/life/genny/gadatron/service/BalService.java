@@ -10,6 +10,7 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 
 import io.quarkus.runtime.StartupEvent;
+import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.models.ServiceToken;
 import org.jboss.logging.Logger;
 
@@ -74,9 +75,29 @@ public class BalService {
         }
 
         // Function to be called from shell scripts
-        public void createPersonBal(String defcode, String value) {
-                log.info(defcode);
+        public void createPersonBal(String defCode, String value) {
+                // Get DEF
+                BaseEntity defPerson = beUtils.getBaseEntity(defCode);
+
+                // Create Person be based on DEF_PERSON
+                BaseEntity newPerson = beUtils.create(defPerson, "TestBal");
+
+                /* Update Person firstname
+                 * 😂
+                 * Bind parameter to Answer
+                */
+                // qwandaUtils.saveAnswer(userToken.getUserCode(), person.getCode(), "PRI_FIRSTNAME", "Billy");
+//                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_FIRSTNAME", "TestBal"));
+                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_LASTNAME", "TestLast"));
+                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_PHONE", "0163388800"));
+
+                log.debug("New Person Added: " + newPerson.toString());
+                log.info(defCode);
                 log.info(value);
+        }
+
+        public void updatepersonBal(String defCode, String beCode) {
+
         }
 
         public void createTestMsg() {
