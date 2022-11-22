@@ -1,20 +1,5 @@
 package life.genny.gadatron.cache;
 
-import static life.genny.gadatron.constants.GadatronConstants.ADMIN;
-import static life.genny.gadatron.constants.GadatronConstants.ADMIN_ROLE;
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
-
-import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.*;
-
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-import java.util.Map;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import org.jboss.logging.Logger;
-
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.entity.search.SearchEntity;
@@ -25,6 +10,16 @@ import life.genny.qwandaq.managers.capabilities.role.RoleBuilder;
 import life.genny.qwandaq.managers.capabilities.role.RoleManager;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.SearchUtils;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
+import java.util.Map;
+
+import static life.genny.gadatron.constants.GadatronConstants.*;
+import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.ALL;
 
 @ApplicationScoped
 public class RoleCaching {
