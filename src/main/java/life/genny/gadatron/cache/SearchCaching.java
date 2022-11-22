@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import life.genny.qwandaq.EEntityStatus;
-import life.genny.qwandaq.attribute.Attribute;
-import life.genny.qwandaq.datatype.DataType;
+import life.genny.qwandaq.entity.search.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.*;
 import life.genny.qwandaq.models.GennySettings;
 import org.jboss.logging.Logger;
 

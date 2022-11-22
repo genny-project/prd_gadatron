@@ -9,6 +9,7 @@ import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
+import life.genny.qwandaq.utils.DatabaseUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 import org.jboss.logging.Logger;
@@ -43,6 +44,9 @@ public class WayanService {
     @Inject
     SearchUtils searchUtils;
 
+    @Inject
+    DatabaseUtils databaseUtils;
+
     /**
      * Execute on start up.
      *
@@ -50,6 +54,8 @@ public class WayanService {
      */
     void onStart(@Observes StartupEvent ev) {
         log.info("Starting my own service");
+
+//        databaseUtils.
     }
 
     public BaseEntity getTestBaseEntity(String beCode) {
@@ -67,7 +73,22 @@ public class WayanService {
             final String name = content;
             BaseEntity personDef = beUtils.getBaseEntity("DEF_PERSON");
             BaseEntity person = beUtils.create(personDef, name);
-            qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), person.getCode(), "PRI_FIRSTNAME", name));
+            String[] names = name.split(" ");
+            if (names.length > 0) {
+                person = beUtils.addValue(person,"PRI_FIRSTNAME", names[0]);
+                StringBuilder lastName = new StringBuilder();
+                for (int i = 1; i < names.length; i++) {
+                    if (lastName.length() > 0) {
+                        lastName.append(" ");
+                    }
+                    lastName.append(names[i]);
+                }
+                person = beUtils.addValue(person,"PRI_LASTNAME", lastName.toString());
+            } else {
+                person = beUtils.addValue(person,"PRI_FIRSTNAME", name);
+            }
+            person = beUtils.addValue(person,"PRI_UUID", person.getCode().substring("PER_".length()));
+            person = beUtils.addValue(person,"PRI_EMAIL", String.join(".", names)+"@gada.io");
             beUtils.updateBaseEntity(person);
             log.info("New Person:"+person.getCode());
             return person.getCode();

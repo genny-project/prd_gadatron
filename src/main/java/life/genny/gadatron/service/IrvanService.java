@@ -57,10 +57,10 @@ public class IrvanService {
         SearchUtils searchUtils;
 
         void onStart(@Observes StartupEvent ev) {
-                //service.fullServiceInit();
-                //log.info(MethodHandles.lookup().lookupClass() + ' init');
+                // service.fullServiceInit();
+                // log.info(MethodHandles.lookup().lookupClass() + ' init');
                 log.info("Irvan starting");
-//                createPersonBal("DEF_PERSON", "firstname");
+                // createPersonBal("DEF_PERSON", "firstname");
         }
 
         public BaseEntity getTestBaseEntity(String beCode) {
@@ -74,20 +74,22 @@ public class IrvanService {
         }
 
         // Function to be called from shell scripts
-        public void createPersonIrvan(String defcode, String value) {
+        public String createPersonIrvan(String defcode, String firstName) {
                 log.info(defcode);
-                log.info(value);
+                log.info(firstName);
                 BaseEntity defBE = beUtils.getBaseEntity(defcode);
-                BaseEntity be = beUtils.create(defBE, value);
-//                qwandaUtils.saveAnswer(new Answer(userToken.userCode, be.getCode(), "PRI_FIRSTNAME",  ))
-                be = beUtils.addValue(be, "PRI_EMAIL", "another@mail.com");
+                BaseEntity be = beUtils.create(defBE, firstName);
+
+                be = beUtils.addValue(be, "PRI_FIRSTNAME", firstName);
+                be = beUtils.addValue(be, "PRI_EMAIL", "irvan.pradita+" + firstName + "@onebyone.co");
                 beUtils.updateBaseEntity(be);
                 log.info(be);
+                return be.getCode();
         }
-        
-//        public void createAnswerIrvan() {
-//        	BaseEntity be
-//        }
+
+        // public void createAnswerIrvan() {
+        // BaseEntity be
+        // }
 
         public void createTestMsg() {
                 // MSG_IM_INTERN_APPLIED
