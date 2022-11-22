@@ -1,18 +1,28 @@
 package life.genny.gadatron.cache;
 
-import life.genny.qwandaq.EEntityStatus;
-import life.genny.qwandaq.entity.search.SearchEntity;
-import life.genny.qwandaq.entity.search.trait.*;
-import life.genny.qwandaq.models.GennySettings;
-import life.genny.qwandaq.utils.CacheUtils;
-import org.jboss.logging.Logger;
+import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
+import life.genny.qwandaq.EEntityStatus;
+import life.genny.qwandaq.entity.search.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.*;
+import life.genny.qwandaq.models.GennySettings;
+import org.jboss.logging.Logger;
+
+import life.genny.qwandaq.entity.search.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.Action;
+import life.genny.qwandaq.entity.search.trait.Column;
+import life.genny.qwandaq.entity.search.trait.AssociatedColumn;
+import life.genny.qwandaq.entity.search.trait.Filter;
+import life.genny.qwandaq.entity.search.trait.Operator;
+import life.genny.qwandaq.entity.search.trait.Ord;
+import life.genny.qwandaq.entity.search.trait.Sort;
+import life.genny.qwandaq.utils.CacheUtils;
+
+import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class SearchCaching {
