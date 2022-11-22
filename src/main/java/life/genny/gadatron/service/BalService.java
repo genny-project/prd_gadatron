@@ -75,25 +75,32 @@ public class BalService {
         }
 
         // Function to be called from shell scripts
-        public void createPersonBal(String defCode, String value) {
+        public String createPersonBal(String defCode, String value) {
+            if (defCode != null && !defCode.isEmpty()) {
+                final String beName = value;
                 // Get DEF
                 BaseEntity defPerson = beUtils.getBaseEntity(defCode);
+                // Create Person BE based on DEF_PERSON
+                BaseEntity newPerson = beUtils.create(defPerson, beName);
 
-                // Create Person be based on DEF_PERSON
-                BaseEntity newPerson = beUtils.create(defPerson, "TestBal");
-
-                /* Update Person firstname
-                 * 😂
+                /*
+                 * Update BE_Attr for new Person
                  * Bind parameter to Answer
                 */
                 // qwandaUtils.saveAnswer(userToken.getUserCode(), person.getCode(), "PRI_FIRSTNAME", "Billy");
-//                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_FIRSTNAME", "TestBal"));
+                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_FIRSTNAME", "TestBal"));
                 qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_LASTNAME", "TestLast"));
                 qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_PHONE", "0163388800"));
+
+                beUtils.updateBaseEntity(newPerson);
 
                 log.debug("New Person Added: " + newPerson.toString());
                 log.info(defCode);
                 log.info(value);
+
+                return newPerson.getCode();
+            }
+            return null;
         }
 
         public void updatepersonBal(String defCode, String beCode) {

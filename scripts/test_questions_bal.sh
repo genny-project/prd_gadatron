@@ -2,8 +2,7 @@
 productCode=${1:-gadatron}
 CONTENT=${2:-TAZ}
 questionCode=${3:-GADA_TAZ_BPMN_TST}
-targetCode=${4:-PER_949F7C8B-7F7F-4505-BDF7-117C3F1231EC}
-
+targetCode=${4:-PER_4EBC2BAD-C668-4526-8F03-8192B6BE82F9}
 sourceCode=-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4
 
 TOKEN=`./gettoken-cache.sh ${productCode}`

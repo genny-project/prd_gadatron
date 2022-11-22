@@ -154,9 +154,14 @@ public class Events {
 		}
 
 		if (code.startsWith("GADA_TAZ_BPMN_TST")) {
-			log.info("Calling BPMN File ..." + msg.getData().getCode() + " msg=" + msg);
+			log.info("Baltazar bpmn Listener ..." + msg.getData().getCode() + " msg=" + msg);
 
-			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder();
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+				.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_BPMN_TST".length()))
+				.add("userCode", userToken.getUserCode())
+				.add("sourceCode", userToken.getUserCode())
+				.add("entityCode", msg.getData().getTargetCode())
+				.add("targetCode", msg.getData().getTargetCode());
 
 			// GET STRING CONTENT FROM PAYLOAD
 			String content = msg.getData().getContent();
@@ -167,7 +172,7 @@ public class Events {
 
 			}
 			JsonObject payload = payloadBuilder.build();
-			kogitoUtils.triggerWorkflow(SELF, "TestBal", payload);
+			kogitoUtils.triggerWorkflow(SELF, "testBal", payload);
 			return;
 		}
 
