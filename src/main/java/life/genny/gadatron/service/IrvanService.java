@@ -74,7 +74,7 @@ public class IrvanService {
         }
 
         // Function to be called from shell scripts
-        public void createPersonIrvan(String defcode, String value) {
+        public BaseEntity createPersonIrvan(String defcode, String value) {
                 log.info(defcode);
                 log.info(value);
                 BaseEntity defBE = beUtils.getBaseEntity(defcode);
@@ -83,6 +83,7 @@ public class IrvanService {
                 be = beUtils.addValue(be, "PRI_EMAIL", "another@mail.com");
                 beUtils.updateBaseEntity(be);
                 log.info(be);
+                return be;
         }
         
 //        public void createAnswerIrvan() {

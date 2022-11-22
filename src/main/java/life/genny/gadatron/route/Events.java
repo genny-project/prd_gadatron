@@ -167,7 +167,7 @@ public class Events {
 					if (content != null) {
 						payloadBuilder.add("content", content);
 
-						System.out.println("Content = " + content);
+						System.out.println("## Content = " + content);
 						/* Load the LNK_DOT */
 
 						BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
