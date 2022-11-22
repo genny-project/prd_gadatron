@@ -1,13 +1,14 @@
 #!/bin/bash
 productCode=${1:-gadatron}
 questionCode=${2:-QUE_USER_DETAILS_GRP}
+content=${3:-Irvan}
 #targetCode=${3:-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4}
 #sourceCode=PER_0F6169E1-FDD5-4DAF-BEC3-4126C6626752
-targetCode=${3:-PER_4EBC2BAD-C668-4526-8F03-8192B6BE82F9}
+targetCode=${4:-PER_4EBC2BAD-C668-4526-8F03-8192B6BE82F9}
 sourceCode=PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4
 TOKEN=`./gettoken-cache.sh ${productCode}`
 echo $TOKEN
-payload="{\"data\":{\"sourceCode\":\"${sourceCode}\",\"targetCode\":\"${targetCode}\",\"code\":\"GADA_IRVAN_${questionCode}\"},\"token\":\"${TOKEN}\",\"msg_type\":\"EVT_MSG\"}"
+payload="{\"data\":{\"sourceCode\":\"${sourceCode}\",\"targetCode\":\"${targetCode}\",\"code\":\"GADA_IRVAN_${questionCode}\",\"content\":\"${content}\"},\"token\":\"${TOKEN}\",\"msg_type\":\"EVT_MSG\"}"
 echo $payload
 echo  $payload > event.json
 
