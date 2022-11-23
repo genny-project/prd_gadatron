@@ -1,21 +1,7 @@
 package life.genny.gadatron.route;
 
-import static life.genny.kogito.common.utils.KogitoUtils.UseService.SELF;
-
-import java.lang.invoke.MethodHandles;
-
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-
-import life.genny.gadatron.service.BalService;
-import org.jboss.logging.Logger;
-
 import com.google.common.reflect.TypeToken;
+import life.genny.gadatron.service.BalService;
 import life.genny.gadatron.service.WayanService;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
@@ -26,8 +12,6 @@ import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
-import com.google.common.reflect.TypeToken;
-import life.genny.gadatron.service.WayanService;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -150,7 +134,16 @@ public class Events {
 					.add("targetCode", msg.getData().getTargetCode());
 			String content = msg.getData().getContent();
 
-			if (code.endsWith("ADD_PERSON")) {
+			if (code.endsWith("QUE_USER_PROFILE_GRP")) {
+				if (content != null) {
+					payloadBuilder.add("content", content);
+				}
+
+				JsonObject payload = payloadBuilder.build();
+				log.info("Payload = " + payload.toString());
+
+				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+			} else {
 				if (content != null) {
 					log.info("Content = " + content);
 
@@ -183,15 +176,6 @@ public class Events {
 						kogitoUtils.triggerWorkflow(SELF, "testWayan", payload);
 					}
 				}
-			} else {
-				if (content != null) {
-					payloadBuilder.add("content", content);
-				}
-
-				JsonObject payload = payloadBuilder.build();
-				log.info("Payload = " + payload.toString());
-
-				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
 			}
 
 		}
