@@ -219,11 +219,12 @@ public class Events {
 			return;
 		}
 
-		if (code.startsWith("GADA_TAZ_BPMN_TST")) {
-			log.info("Baltazar bpmn Listener ..." + msg.getData().getCode() + " msg=" + msg);
+		if (code.startsWith("GADA_TAZ_")) {
+			// BPMN_TST
+			log.info("GADA_TAZ Event Listener ..." + msg.getData().getCode() + " msg=" + msg);
 
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
-				.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_BPMN_TST".length()))
+				.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_".length()))
 				.add("userCode", userToken.getUserCode())
 				.add("sourceCode", userToken.getUserCode())
 				.add("entityCode", msg.getData().getTargetCode())
@@ -232,6 +233,12 @@ public class Events {
 			// GET STRING CONTENT FROM PAYLOAD
 			String content = msg.getData().getContent();
 			log.debug(content);
+
+			// CHECK QUESTION
+			if (code.endsWith("ADD_PERSON")) {
+
+			}
+
 			if (content != null) {
 				payloadBuilder.add("content", content);
 				// System.out.println("Content = " + content);

@@ -89,12 +89,12 @@ public class BalService {
                 */
                 // qwandaUtils.saveAnswer(userToken.getUserCode(), person.getCode(), "PRI_FIRSTNAME", "Billy");
                 qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_FIRSTNAME", "TestBal"));
-                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_LASTNAME", "TestLast"));
-                qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_PHONE", "0163388800"));
+                // qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_LASTNAME", "TestLast"));
+                // qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), newPerson.getCode(), "PRI_PHONE", "0163388800"));
 
                 beUtils.updateBaseEntity(newPerson);
 
-                log.debug("New Person Added: " + newPerson.toString());
+                log.debug("New Person Added: " + newPerson);
                 log.info(defCode);
                 log.info(value);
 
