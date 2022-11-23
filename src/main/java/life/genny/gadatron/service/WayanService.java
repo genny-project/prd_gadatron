@@ -61,67 +61,94 @@ public class WayanService {
      * @param ev The startup event
      */
     void onStart(@Observes StartupEvent ev) {
-        log.info("Starting my own service");
+        log.info("Wayan service is starting");
         setupQuestionForm();
+        setupSimpleUserDetailsForm();
     }
 
+    /**
+     * create and insert a group of question _SIMPLE_USER_DETAILS_GRP
+     */
     @Transactional
-    void setupQuestionForm() {
-        Question createQuestion = null;
+    void setupSimpleUserDetailsForm() {
+        Question questionGroup = null;
         try {
-            createQuestion = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATE_QUESTION_GRP");
+            questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_SIMPLEUSER_DETAILS_GRP");
+            log.info("Question already exists");
         }catch (Exception e){
             log.error(e);
         }
-        if (createQuestion == null) {
-            createQuestion = new Question();
-            createQuestion.setCode("QUE_WAYAN_CREATE_QUESTION_GRP");
-            Attribute attribute = findAttributeByCode("QQQ_QUESTION_GROUP");
-            if (attribute != null) {
-                createQuestion.setAttribute(attribute);
-                createQuestion.setAttributeCode(attribute.getCode());
-            }
-            createQuestion.setName("Create a Question Group Form");
-            createQuestion.setRealm(productCode);
+        if (questionGroup == null) {
+            questionGroup = createAQuestion("QUE_WAYAN_SIMPLEUSER_DETAILS_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
 
-            Question queChild = createAQuestion("QUE_WAYAN_QUESTION_NAME", "ATT_QUESTION_WAYAN_NAME", "java.lang.String", "Question name", "Name of the question");
-            QuestionQuestion qq = createQuestionQuestion(createQuestion, queChild);
-            createQuestion.addChildQuestion(qq);
+            Question questionChild = createAQuestion("QUE_FIRSTNAME", null, null, false, null, null);
+            createQuestionQuestion(questionGroup, questionChild, 1, true);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_ATTRIBUTE_CODE", "ATT_QUESTION_WAYAN_ATTRIBUTE_CODE", "java.lang.String","Question attribute code", "Attribute code of the question");
-            qq = new QuestionQuestion(createQuestion, queChild, 1.0);
-            qq.setRealm(productCode);
-            databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
-            createQuestion.addChildQuestion(qq);
+            questionChild = createAQuestion("QUE_LASTNAME", null, null, true, null, null);
+            createQuestionQuestion(questionGroup, questionChild, 2, true);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_CODE", "ATT_QUESTION_WAYAN_CODE", "java.lang.String","Question code", "Code of the question");
-            qq = new QuestionQuestion(createQuestion, queChild, 1.0);
-            qq.setRealm(productCode);
-            databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
-            createQuestion.addChildQuestion(qq);
+            questionChild = createAQuestion("QUE_DOB", null, null, true, null, null);
+            createQuestionQuestion(questionGroup, questionChild, 3, true);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_MANDATORY", "ATT_QUESTION_WAYAN_MANDATORY", "java.lang.Boolean", "Question code", "Code of the question");
-            qq = new QuestionQuestion(createQuestion, queChild, 1.0);
-            qq.setRealm(productCode);
-            databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
-            createQuestion.addChildQuestion(qq);
+            questionChild = createAQuestion("QUE_EMAIL", null, null, true, null, null);
+            createQuestionQuestion(questionGroup, questionChild, 4, true);
 
-            databaseUtils.saveQuestion(createQuestion);
+            questionChild = createAQuestion("QUE_MOBILE", null, null, false, null, null);
+            createQuestionQuestion(questionGroup, questionChild, 5, false);
         }
     }
 
-    private QuestionQuestion createQuestionQuestion(Question source, Question target) {
+    /**
+     * create and insert a group of question _CREATE_QUESTION_GRP
+     */
+    @Transactional
+    void setupQuestionForm() {
+        Question questionGroup = null;
+        try {
+            questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATEQUESTION_GRP");
+            log.info("Question already exists");
+        }catch (Exception e){
+            log.error(e);
+        }
+        if (questionGroup == null) {
+            questionGroup = createAQuestion("QUE_WAYAN_CREATEQUESTION_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
+
+            Question questionChild = createAQuestion("QUE_WAYAN_NAME", "PRI_WAYAN_NAME", "java.lang.String", true, "Question name", "Name of the question");
+            createQuestionQuestion(questionGroup, questionChild, 2, true);
+
+            questionChild = createAQuestion("QUE_WAYAN_ATTRIBUTECODE", "PRI_WAYAN_ATTRIBUTECODE", "java.lang.String", true, "Question attribute code", "Attribute code of the question");
+            createQuestionQuestion(questionGroup, questionChild, 3, true);
+
+            questionChild = createAQuestion("QUE_WAYAN_CODE", "PRI_WAYAN_CODE", "java.lang.String", true, "Question code", "Code of the question");
+            createQuestionQuestion(questionGroup, questionChild, 1, true);
+
+            questionChild = createAQuestion("QUE_WAYAN_MANDATORY", "PRI_WAYAN_MANDATORY", "java.lang.Boolean", true, "Question Mandatory", "Code of the question");
+            createQuestionQuestion(questionGroup, questionChild, 4, true);
+        }
+    }
+
+    /**
+     * Create and insert a question_question data
+     *
+     * @param source    required
+     * @param target    required
+     * @param weight    optional if you know the question_question already exists
+     * @param mandatory required
+     */
+    private void createQuestionQuestion(Question source, Question target, double weight, boolean mandatory) {
         QuestionQuestion qq = null;
         try {
             qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, source.getCode(), target.getCode());
+            String isReplace = System.getenv("REPLACE_OWN_QUESTION");
+            if (isReplace != null && isReplace.equalsIgnoreCase("TRUE")) {
+                qq = null;
+                databaseUtils.deleteQuestionQuestion(productCode, source.getCode(), target.getCode());
+            }
         }catch (Exception e){
             log.error("qq not found:"+e.getMessage());
         }
         if (qq == null) {
-            qq = new QuestionQuestion(source, target.getCode(), 1.0, target.getMandatory(), false, false, false);
+            qq = new QuestionQuestion(source, target.getCode(),  weight, target.getMandatory(), false, false, false);
             qq.setRealm(productCode);
             qq.setFormTrigger(false);
             qq.setVersion(1L);
@@ -130,37 +157,64 @@ public class WayanService {
             qq.setCreateOnTrigger(true);
             qq.setDependency("Something");
             qq.setIcon(null);
+            qq.setMandatory(mandatory);
             databaseUtils.saveQuestionQuestion(qq);
         }
-        qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, source.getCode(), target.getCode());
-        return qq;
     }
 
+    /**
+     * Create or get a question data by code
+     *
+     * @param placeholder,   optional if you know the question already exists
+     * @param code           of question, required
+     * @param attributeCode  , optional if you know the question already exists
+     * @param valueTypeClass must be a class name of the data type, optional if you know the question already exists
+     * @param mandatory
+     * @param name           of the question, optional if you know the question already exists
+     * @return
+     */
+    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, boolean mandatory, String name, String placeholder) {
 
-    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, String name, String placeholder) {
-        Attribute attribute = findAttributeByCode( attributeCode);
-        if (attribute == null) {
-            attribute = new Attribute();
-            attribute.setDataType(DataType.getInstance(valueTypeClass));
-            attribute.setCode(attributeCode);
-            attribute.setName(attributeCode.toLowerCase().replace("_", " "));
-            attribute.setRealm(productCode);
-            attribute.setStatus(EEntityStatus.ACTIVE);
-            attribute.setDescription(attribute.getName());
-            databaseUtils.saveAttribute(attribute);
-            attribute = findAttributeByCode(attributeCode);
+        Question queChild = null;
+        try {
+            queChild = databaseUtils.findQuestionByCode(productCode, code);
+            String isReplace = System.getenv("REPLACE_OWN_QUESTION");
+            if (isReplace != null && isReplace.equalsIgnoreCase("TRUE")) {
+                queChild = null;
+                databaseUtils.deleteQuestion(productCode, code);
+            }
+        }catch (Exception e) {
+            log.error("Questino not found: "+code, e);
         }
-        Question queChild = new Question();
-        queChild.setCode(code);
-        queChild.setName(name);
-        queChild.setMandatory(true);
-        queChild.setPlaceholder(placeholder);
-        queChild.setHtml(null);
-        queChild.setIcon(null);
-        queChild.setRealm(productCode);
-        queChild.setAttribute(attribute);
-        databaseUtils.saveQuestion(queChild);
-        queChild = databaseUtils.findQuestionByCode(productCode, code);
+        if (queChild == null) {
+            Attribute attribute = findAttributeByCode(attributeCode);
+            if (attribute == null) {
+                attribute = new Attribute();
+                attribute.setDataType(DataType.getInstance(valueTypeClass));
+                attribute.setCode(attributeCode);
+                attribute.setName(attributeCode.toLowerCase().replace("_", " "));
+                attribute.setRealm(productCode);
+                attribute.setStatus(EEntityStatus.ACTIVE);
+                attribute.setDescription(attribute.getName());
+                databaseUtils.saveAttribute(attribute);
+                attribute = findAttributeByCode(attributeCode);
+            }
+            assert attribute != null;
+
+            queChild = new Question();
+            queChild.setCode(code);
+            queChild.setName(name);
+            queChild.setMandatory(true);
+            queChild.setPlaceholder(placeholder);
+            queChild.setHtml(null);
+            queChild.setIcon(null);
+            queChild.setRealm(productCode);
+            queChild.setAttribute(attribute);
+            queChild.setAttributeCode(attribute.getCode());
+            queChild.setMandatory(mandatory);
+            databaseUtils.saveQuestion(queChild);
+            queChild = databaseUtils.findQuestionByCode(productCode, code);
+        }
         return queChild;
     }
 
@@ -193,13 +247,16 @@ public class WayanService {
     }
 
     public String createAPerson2(String entityDefinition, String content) {
+        log.info("Entity Definition is "+entityDefinition);
         if (content != null && !content.isEmpty()) {
             final String name = content;
             BaseEntity personDef = beUtils.getBaseEntity(entityDefinition);
             BaseEntity person = beUtils.create(personDef, name);
             String[] names = name.split(" ");
             if (names.length > 0) {
-                person = beUtils.addValue(person, getCorrectAttribute(person, "FIRSTNAME"), names[0]);
+                person = beUtils.addValue(person, "PRI_FIRSTNAME", names[0]);
+                person = beUtils.addValue(person, "PRI_NAME", name);
+
                 StringBuilder lastName = new StringBuilder();
                 for (int i = 1; i < names.length; i++) {
                     if (lastName.length() > 0) {
@@ -207,12 +264,12 @@ public class WayanService {
                     }
                     lastName.append(names[i]);
                 }
-                person = beUtils.addValue(person, getCorrectAttribute(person, "LASTNAME"), lastName.toString());
+                person = beUtils.addValue(person, "PRI_LASTNAME", lastName.toString());
             } else {
-                person = beUtils.addValue(person, getCorrectAttribute(person, "FIRSTNAME"), name);
+                person = beUtils.addValue(person, "PRI_FIRSTNAME", name);
             }
-            person = beUtils.addValue(person, getCorrectAttribute(person, "UUID") , person.getCode().substring("PER_".length()));
-            person = beUtils.addValue(person,getCorrectAttribute(person, "PRI_EMAIL"), String.join(".", names)+"@gada.io");
+            person = beUtils.addValue(person, "PRI_UUID" , person.getCode().substring("PER_".length()));
+            person = beUtils.addValue(person,"PRI_EMAIL", String.join(".", names)+"@gada.io");
             beUtils.updateBaseEntity(person);
             log.info("New Person:"+person.getCode());
             return person.getCode();
