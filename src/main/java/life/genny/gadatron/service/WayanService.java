@@ -79,7 +79,8 @@ public class WayanService {
             log.error(e);
         }
         if (questionGroup == null) {
-            questionGroup = createAQuestion("QUE_WAYAN_SIMPLEUSER_DETAILS_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
+            questionGroup = createAQuestion("QUE_WAYAN_SIMPLEUSER_DETAILS_GRP", "QQQ_QUESTION_GROUP", null, true,
+                    "Create Question Group", null);
 
             Question questionChild = createAQuestion("QUE_FIRSTNAME", null, null, false, null, null);
             createQuestionQuestion(questionGroup, questionChild, 1, true);
@@ -108,22 +109,27 @@ public class WayanService {
         try {
             questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATEQUESTION_GRP");
             log.info("Question already exists");
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
         }
         if (questionGroup == null) {
-            questionGroup = createAQuestion("QUE_WAYAN_CREATEQUESTION_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
+            questionGroup = createAQuestion("QUE_WAYAN_CREATEQUESTION_GRP", "QQQ_QUESTION_GROUP", null, true,
+                    "Create Question Group", null);
 
-            Question questionChild = createAQuestion("QUE_WAYAN_NAME", "PRI_WAYAN_NAME", "java.lang.String", true, "Question name", "Name of the question");
+            Question questionChild = createAQuestion("QUE_WAYAN_NAME", "PRI_WAYAN_NAME", "java.lang.String", true,
+                    "Question name", "Name of the question");
             createQuestionQuestion(questionGroup, questionChild, 2, true);
 
-            questionChild = createAQuestion("QUE_WAYAN_ATTRIBUTECODE", "PRI_WAYAN_ATTRIBUTECODE", "java.lang.String", true, "Question attribute code", "Attribute code of the question");
+            questionChild = createAQuestion("QUE_WAYAN_ATTRIBUTECODE", "PRI_WAYAN_ATTRIBUTECODE", "java.lang.String",
+                    true, "Question attribute code", "Attribute code of the question");
             createQuestionQuestion(questionGroup, questionChild, 3, true);
 
-            questionChild = createAQuestion("QUE_WAYAN_CODE", "PRI_WAYAN_CODE", "java.lang.String", true, "Question code", "Code of the question");
+            questionChild = createAQuestion("QUE_WAYAN_CODE", "PRI_WAYAN_CODE", "java.lang.String", true,
+                    "Question code", "Code of the question");
             createQuestionQuestion(questionGroup, questionChild, 1, true);
 
-            questionChild = createAQuestion("QUE_WAYAN_MANDATORY", "PRI_WAYAN_MANDATORY", "java.lang.Boolean", true, "Question Mandatory", "Code of the question");
+            questionChild = createAQuestion("QUE_WAYAN_MANDATORY", "PRI_WAYAN_MANDATORY", "java.lang.Boolean", true,
+                    "Question Mandatory", "Code of the question");
             createQuestionQuestion(questionGroup, questionChild, 4, true);
         }
     }
@@ -140,11 +146,11 @@ public class WayanService {
         QuestionQuestion qq = null;
         try {
             qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, source.getCode(), target.getCode());
-        }catch (Exception e){
-            log.error("qq not found:"+e.getMessage());
+        } catch (Exception e) {
+            log.error("qq not found:" + e.getMessage());
         }
         if (qq == null) {
-            qq = new QuestionQuestion(source, target.getCode(),  weight, target.getMandatory(), false, false, false);
+            qq = new QuestionQuestion(source, target.getCode(), weight, target.getMandatory(), false, false, false);
             qq.setRealm(productCode);
             qq.setFormTrigger(false);
             qq.setVersion(1L);
@@ -164,12 +170,15 @@ public class WayanService {
      * @param placeholder,   optional if you know the question already exists
      * @param code           of question, required
      * @param attributeCode  , optional if you know the question already exists
-     * @param valueTypeClass must be a class name of the data type, optional if you know the question already exists
+     * @param valueTypeClass must be a class name of the data type, optional if you
+     *                       know the question already exists
      * @param mandatory
-     * @param name           of the question, optional if you know the question already exists
+     * @param name           of the question, optional if you know the question
+     *                       already exists
      * @return
      */
-    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, boolean mandatory, String name, String placeholder) {
+    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, boolean mandatory,
+            String name, String placeholder) {
 
         Question queChild = null;
         try {
@@ -179,8 +188,8 @@ public class WayanService {
                 queChild = null;
                 databaseUtils.deleteQuestion(productCode, code);
             }
-        }catch (Exception e) {
-            log.error("Questino not found: "+code, e);
+        } catch (Exception e) {
+            log.error("Questino not found: " + code, e);
         }
         if (queChild == null) {
             Attribute attribute = findAttributeByCode(attributeCode);
@@ -209,8 +218,8 @@ public class WayanService {
     private Attribute findAttributeByCode(String code) {
         try {
             return databaseUtils.findAttributeByCode(productCode, code);
-        }catch (Exception e) {
-            log.error(code+" not found");
+        } catch (Exception e) {
+            log.error(code + " not found");
             return null;
         }
     }
@@ -235,7 +244,7 @@ public class WayanService {
     }
 
     public String createAPerson2(String entityDefinition, String content) {
-        log.info("Entity Definition is "+entityDefinition);
+        log.info("Entity Definition is " + entityDefinition);
         if (content != null && !content.isEmpty()) {
             final String name = content;
             BaseEntity personDef = beUtils.getBaseEntity(entityDefinition);
@@ -256,10 +265,10 @@ public class WayanService {
             } else {
                 person = beUtils.addValue(person, "PRI_FIRSTNAME", name);
             }
-            person = beUtils.addValue(person, "PRI_UUID" , person.getCode().substring("PER_".length()));
-            person = beUtils.addValue(person,"PRI_EMAIL", String.join(".", names)+"@gada.io");
+            person = beUtils.addValue(person, "PRI_UUID", person.getCode().substring("PER_".length()));
+            person = beUtils.addValue(person, "PRI_EMAIL", String.join(".", names) + "@gada.io");
             beUtils.updateBaseEntity(person);
-            log.info("New Person:"+person.getCode());
+            log.info("New Person:" + person.getCode());
             return person.getCode();
         }
         return null;
@@ -272,11 +281,12 @@ public class WayanService {
                 name = content.get("ATT_PRI_FIRSTNAME");
             }
             BaseEntity personDef = beUtils.getBaseEntity("DEF_PERSON");
-            String uuid = personDef.getValue("PRI_PREFIX").get()+"_"+(content.containsKey("PRI_UUID")? content.get("PRI_UUID"): UUID.randomUUID().toString());
+            String uuid = personDef.getValue("PRI_PREFIX").get() + "_"
+                    + (content.containsKey("PRI_UUID") ? content.get("PRI_UUID") : UUID.randomUUID().toString());
             BaseEntity person = beUtils.create(personDef, name, uuid);
 
             for (String key : content.keySet()) {
-                log.info("data from message: "+key+":"+content.get(key));
+                log.info("data from message: " + key + ":" + content.get(key));
                 qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), person.getCode(), key, content.get(key)));
             }
             return person.getCode();
