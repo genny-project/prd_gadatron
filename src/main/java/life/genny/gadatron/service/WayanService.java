@@ -72,11 +72,14 @@ public class WayanService {
     @Transactional
     void setupSimpleUserDetailsForm() {
         Question questionGroup = null;
-        try {
-            questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_SIMPLEUSER_DETAILS_GRP");
-            log.info("Question already exists");
-        }catch (Exception e){
-            log.error(e);
+        String isReplace = System.getenv("REPLACE_OWN_QUESTION");
+        if (isReplace == null || "FALSE".equalsIgnoreCase(isReplace)) {
+            try {
+                questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_SIMPLEUSER_DETAILS_GRP");
+                log.info("Question already exists");
+            } catch (Exception e) {
+                log.error(e);
+            }
         }
         if (questionGroup == null) {
             questionGroup = createAQuestion("QUE_WAYAN_SIMPLEUSER_DETAILS_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
@@ -104,6 +107,7 @@ public class WayanService {
     @Transactional
     void setupQuestionForm() {
         Question questionGroup = null;
+        String isReplace = System.getenv("REPLACE_OWN_QUESTION");
         try {
             questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATEQUESTION_GRP");
             log.info("Question already exists");
@@ -139,11 +143,6 @@ public class WayanService {
         QuestionQuestion qq = null;
         try {
             qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, source.getCode(), target.getCode());
-            String isReplace = System.getenv("REPLACE_OWN_QUESTION");
-            if (isReplace != null && isReplace.equalsIgnoreCase("TRUE")) {
-                qq = null;
-                databaseUtils.deleteQuestionQuestion(productCode, source.getCode(), target.getCode());
-            }
         }catch (Exception e){
             log.error("qq not found:"+e.getMessage());
         }
