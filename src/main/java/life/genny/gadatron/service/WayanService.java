@@ -62,7 +62,7 @@ public class WayanService {
      */
     void onStart(@Observes StartupEvent ev) {
         log.info("Starting my own service");
-        setupQuestionForm();
+        // setupQuestionForm();
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class WayanService {
         Question createQuestion = null;
         try {
             createQuestion = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATE_QUESTION_GRP");
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e);
         }
         if (createQuestion == null) {
@@ -84,29 +84,36 @@ public class WayanService {
             createQuestion.setName("Create a Question Group Form");
             createQuestion.setRealm(productCode);
 
-            Question queChild = createAQuestion("QUE_WAYAN_QUESTION_NAME", "ATT_QUESTION_WAYAN_NAME", "java.lang.String", "Question name", "Name of the question");
+            Question queChild = createAQuestion("QUE_WAYAN_QUESTION_NAME", "ATT_QUESTION_WAYAN_NAME",
+                    "java.lang.String", "Question name", "Name of the question");
             QuestionQuestion qq = createQuestionQuestion(createQuestion, queChild);
             createQuestion.addChildQuestion(qq);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_ATTRIBUTE_CODE", "ATT_QUESTION_WAYAN_ATTRIBUTE_CODE", "java.lang.String","Question attribute code", "Attribute code of the question");
+            queChild = createAQuestion("QUE_WAYAN_QUESTION_ATTRIBUTE_CODE", "ATT_QUESTION_WAYAN_ATTRIBUTE_CODE",
+                    "java.lang.String", "Question attribute code", "Attribute code of the question");
             qq = new QuestionQuestion(createQuestion, queChild, 1.0);
             qq.setRealm(productCode);
             databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
+            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(),
+                    queChild.getCode());
             createQuestion.addChildQuestion(qq);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_CODE", "ATT_QUESTION_WAYAN_CODE", "java.lang.String","Question code", "Code of the question");
+            queChild = createAQuestion("QUE_WAYAN_QUESTION_CODE", "ATT_QUESTION_WAYAN_CODE", "java.lang.String",
+                    "Question code", "Code of the question");
             qq = new QuestionQuestion(createQuestion, queChild, 1.0);
             qq.setRealm(productCode);
             databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
+            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(),
+                    queChild.getCode());
             createQuestion.addChildQuestion(qq);
 
-            queChild = createAQuestion("QUE_WAYAN_QUESTION_MANDATORY", "ATT_QUESTION_WAYAN_MANDATORY", "java.lang.Boolean", "Question code", "Code of the question");
+            queChild = createAQuestion("QUE_WAYAN_QUESTION_MANDATORY", "ATT_QUESTION_WAYAN_MANDATORY",
+                    "java.lang.Boolean", "Question code", "Code of the question");
             qq = new QuestionQuestion(createQuestion, queChild, 1.0);
             qq.setRealm(productCode);
             databaseUtils.saveQuestionQuestion(qq);
-            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(), queChild.getCode());
+            qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, createQuestion.getCode(),
+                    queChild.getCode());
             createQuestion.addChildQuestion(qq);
 
             databaseUtils.saveQuestion(createQuestion);
@@ -117,8 +124,8 @@ public class WayanService {
         QuestionQuestion qq = null;
         try {
             qq = databaseUtils.findQuestionQuestionBySourceAndTarget(productCode, source.getCode(), target.getCode());
-        }catch (Exception e){
-            log.error("qq not found:"+e.getMessage());
+        } catch (Exception e) {
+            log.error("qq not found:" + e.getMessage());
         }
         if (qq == null) {
             qq = new QuestionQuestion(source, target.getCode(), 1.0, target.getMandatory(), false, false, false);
@@ -136,9 +143,9 @@ public class WayanService {
         return qq;
     }
 
-
-    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, String name, String placeholder) {
-        Attribute attribute = findAttributeByCode( attributeCode);
+    private Question createAQuestion(String code, String attributeCode, String valueTypeClass, String name,
+            String placeholder) {
+        Attribute attribute = findAttributeByCode(attributeCode);
         if (attribute == null) {
             attribute = new Attribute();
             attribute.setDataType(DataType.getInstance(valueTypeClass));
@@ -159,16 +166,16 @@ public class WayanService {
         queChild.setIcon(null);
         queChild.setRealm(productCode);
         queChild.setAttribute(attribute);
-        databaseUtils.saveQuestion(queChild);
-        queChild = databaseUtils.findQuestionByCode(productCode, code);
+        // databaseUtils.saveQuestion(queChild);
+        // queChild = databaseUtils.findQuestionByCode(productCode, code);
         return queChild;
     }
 
     private Attribute findAttributeByCode(String code) {
         try {
             return databaseUtils.findAttributeByCode(productCode, code);
-        }catch (Exception e) {
-            log.error(code+" not found");
+        } catch (Exception e) {
+            log.error(code + " not found");
             return null;
         }
     }
@@ -211,10 +218,12 @@ public class WayanService {
             } else {
                 person = beUtils.addValue(person, getCorrectAttribute(person, "FIRSTNAME"), name);
             }
-            person = beUtils.addValue(person, getCorrectAttribute(person, "UUID") , person.getCode().substring("PER_".length()));
-            person = beUtils.addValue(person,getCorrectAttribute(person, "PRI_EMAIL"), String.join(".", names)+"@gada.io");
+            person = beUtils.addValue(person, getCorrectAttribute(person, "UUID"),
+                    person.getCode().substring("PER_".length()));
+            person = beUtils.addValue(person, getCorrectAttribute(person, "PRI_EMAIL"),
+                    String.join(".", names) + "@gada.io");
             beUtils.updateBaseEntity(person);
-            log.info("New Person:"+person.getCode());
+            log.info("New Person:" + person.getCode());
             return person.getCode();
         }
         return null;
@@ -227,11 +236,12 @@ public class WayanService {
                 name = content.get("ATT_PRI_FIRSTNAME");
             }
             BaseEntity personDef = beUtils.getBaseEntity("DEF_PERSON");
-            String uuid = personDef.getValue("PRI_PREFIX").get()+"_"+(content.containsKey("PRI_UUID")? content.get("PRI_UUID"): UUID.randomUUID().toString());
+            String uuid = personDef.getValue("PRI_PREFIX").get() + "_"
+                    + (content.containsKey("PRI_UUID") ? content.get("PRI_UUID") : UUID.randomUUID().toString());
             BaseEntity person = beUtils.create(personDef, name, uuid);
 
             for (String key : content.keySet()) {
-                log.info("data from message: "+key+":"+content.get(key));
+                log.info("data from message: " + key + ":" + content.get(key));
                 qwandaUtils.saveAnswer(new Answer(userToken.getUserCode(), person.getCode(), key, content.get(key)));
             }
             return person.getCode();
