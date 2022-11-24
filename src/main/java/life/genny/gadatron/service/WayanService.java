@@ -72,14 +72,11 @@ public class WayanService {
     @Transactional
     void setupSimpleUserDetailsForm() {
         Question questionGroup = null;
-        String isReplace = System.getenv("REPLACE_OWN_QUESTION");
-        if (isReplace == null || "FALSE".equalsIgnoreCase(isReplace)) {
-            try {
-                questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_SIMPLEUSER_DETAILS_GRP");
-                log.info("Question already exists");
-            } catch (Exception e) {
-                log.error(e);
-            }
+        try {
+            questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_SIMPLEUSER_DETAILS_GRP");
+            log.info("Question already exists");
+        } catch (Exception e) {
+            log.error(e);
         }
         if (questionGroup == null) {
             questionGroup = createAQuestion("QUE_WAYAN_SIMPLEUSER_DETAILS_GRP", "QQQ_QUESTION_GROUP", null, true, "Create Question Group", null);
@@ -200,17 +197,9 @@ public class WayanService {
             }
             assert attribute != null;
 
-            queChild = new Question();
-            queChild.setCode(code);
-            queChild.setName(name);
-            queChild.setMandatory(true);
-            queChild.setPlaceholder(placeholder);
-            queChild.setHtml(null);
+            queChild = new Question(code, name, attribute, mandatory, null, placeholder);
             queChild.setIcon(null);
             queChild.setRealm(productCode);
-            queChild.setAttribute(attribute);
-            queChild.setAttributeCode(attribute.getCode());
-            queChild.setMandatory(mandatory);
             databaseUtils.saveQuestion(queChild);
             queChild = databaseUtils.findQuestionByCode(productCode, code);
         }
