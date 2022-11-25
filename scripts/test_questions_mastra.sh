@@ -2,7 +2,7 @@
 productCode=gadatron
 questionCode=${1:-QUE_USER_DETAILS_GRP}
 targetCode=${2:-PER_949F7C8B-7F7F-4505-BDF7-117C3F1231EC}
-sourceCode=-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4
+sourceCode="PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4"
 TOKEN=`./gettoken-cache.sh ${productCode}`
 CONTENT=`cat content.txt`
 echo $TOKEN
