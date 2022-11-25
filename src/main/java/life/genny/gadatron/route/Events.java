@@ -1,6 +1,8 @@
 package life.genny.gadatron.route;
 
 import com.google.common.reflect.TypeToken;
+
+import life.genny.gadatron.service.AmrizalService;
 import life.genny.gadatron.service.BalService;
 import org.jboss.logging.Logger;
 
@@ -37,6 +39,8 @@ public class Events {
 
 	static final Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
+	private static final String DEF_BALI = "DEF_BALI_PERSON";
+
 	@Inject
 	UserToken userToken;
 
@@ -54,6 +58,9 @@ public class Events {
 
 	@Inject
 	BalService balService;
+
+	@Inject
+	AmrizalService amService;
 
 	/**
 	 * @param msg
@@ -327,6 +334,53 @@ public class Events {
 
 			kogitoUtils.triggerWorkflow(SELF, "testQuestionIrvan", payload);
 			return;
+		}
+
+		if (code.startsWith("GADA_AMRIZAL_QUE_")) {
+			log.info("Displaying Amrizal test question ..." + msg.getData().getCode() + " msg=" + msg);
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", msg.getData().getCode().substring("GADA_AMRIZAL_".length()));
+
+			String content = msg.getData().getContent();
+			if (content != null) {
+				payloadBuilder.add("content", content);
+
+				log.info("Content = " + content);
+				/* Load the LNK_DOT */
+
+				String amrizalCode = amService.createPersonAmrizal(DEF_BALI, content);
+
+				if (amrizalCode != null)
+					payloadBuilder.add("entityCode", amrizalCode).add("targetCode", amrizalCode);
+				else
+					payloadBuilder
+							.add("entityCode", msg.getData().getTargetCode())
+							.add("targetCode", msg.getData().getTargetCode());
+
+				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, amrizalCode);
+				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
+				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
+				beUtils.updateBaseEntity(PRODUCT_CODE, target);
+			}
+
+			if (userToken != null) {
+				if (userToken.getUserCode() != null) {
+					payloadBuilder.add("sourceCode", userToken.getUserCode());
+					payloadBuilder.add("userCode", userToken.getUserCode());
+				}
+			} else {
+				log.error("userToken is Null");
+			}
+
+			JsonObject payload = payloadBuilder.build();
+
+			log.info("Payload = " + payload.toString());
+
+			if (kogitoUtils != null) {
+				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+			} else {
+				log.error("kogitoUtils is Null");
+			}
 		}
 
 	}
