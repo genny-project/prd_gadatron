@@ -104,7 +104,6 @@ public class WayanService {
     @Transactional
     void setupQuestionForm() {
         Question questionGroup = null;
-        String isReplace = System.getenv("REPLACE_OWN_QUESTION");
         try {
             questionGroup = databaseUtils.findQuestionByCode(productCode, "QUE_WAYAN_CREATEQUESTION_GRP");
             log.info("Question already exists");
@@ -144,7 +143,7 @@ public class WayanService {
             log.error("qq not found:"+e.getMessage());
         }
         if (qq == null) {
-            qq = new QuestionQuestion(source, target.getCode(),  weight, target.getMandatory(), false, false, false);
+            qq = new QuestionQuestion(source, target.getCode(),  weight, mandatory, false, false, false);
             qq.setRealm(productCode);
             qq.setFormTrigger(false);
             qq.setVersion(1L);
@@ -153,7 +152,6 @@ public class WayanService {
             qq.setCreateOnTrigger(true);
             qq.setDependency("Something");
             qq.setIcon(null);
-            qq.setMandatory(mandatory);
             databaseUtils.saveQuestionQuestion(qq);
         }
     }
@@ -170,15 +168,9 @@ public class WayanService {
      * @return
      */
     private Question createAQuestion(String code, String attributeCode, String valueTypeClass, boolean mandatory, String name, String placeholder) {
-
         Question queChild = null;
         try {
             queChild = databaseUtils.findQuestionByCode(productCode, code);
-            String isReplace = System.getenv("REPLACE_OWN_QUESTION");
-            if (isReplace != null && isReplace.equalsIgnoreCase("TRUE")) {
-                queChild = null;
-                databaseUtils.deleteQuestion(productCode, code);
-            }
         }catch (Exception e) {
             log.error("Questino not found: "+code, e);
         }
@@ -200,8 +192,7 @@ public class WayanService {
             queChild = new Question(code, name, attribute, mandatory, null, placeholder);
             queChild.setIcon(null);
             queChild.setRealm(productCode);
-            databaseUtils.saveQuestion(queChild);
-            queChild = databaseUtils.findQuestionByCode(productCode, code);
+            queChild = databaseUtils.saveQuestion(queChild);
         }
         return queChild;
     }
@@ -257,7 +248,7 @@ public class WayanService {
                 person = beUtils.addValue(person, "PRI_FIRSTNAME", name);
             }
             person = beUtils.addValue(person, "PRI_UUID" , person.getCode().substring("PER_".length()));
-            person = beUtils.addValue(person,"PRI_EMAIL", String.join(".", names)+"@gada.io");
+            person = beUtils.addValue(person,"PRI_EMAIL", String.join("_", names)+"@gada.io".toLowerCase().trim());
             beUtils.updateBaseEntity(person);
             log.info("New Person:"+person.getCode());
             return person.getCode();
