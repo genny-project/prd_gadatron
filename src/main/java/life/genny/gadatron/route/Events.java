@@ -211,7 +211,7 @@ public class Events {
 		}
 
 		// test question event
-		if (code.startsWith("GADA_TAZ_CREATE_PER")) {
+		if (code.startsWith("UNUSED_GADA_TAZ_CREATE_PER")) {
 			log.info("Creating Taz Person ..." + msg.getData().getCode() + " msg=" + msg);
 
 			// BUILD JSON PAYLOAD CONTENT
@@ -256,8 +256,6 @@ public class Events {
 
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
 				.add("questionCode", msg.getData().getCode().substring("GADA_TAZ_".length()))
-				.add("userCode", userToken.getUserCode())
-				.add("sourceCode", userToken.getUserCode())
 				.add("entityCode", msg.getData().getTargetCode())
 				.add("targetCode", msg.getData().getTargetCode());
 
@@ -265,19 +263,33 @@ public class Events {
 			String content = msg.getData().getContent();
 			log.debug(content);
 
-			// CHECK QUESTION
-			if (code.endsWith("ADD_PERSON")) {
-
-			}
-
 			if (content != null) {
 				payloadBuilder.add("content", content);
 				// System.out.println("Content = " + content);
-
+				log.info("Content = " + content);
 			}
+			// CHECK FOR TOKEN EVENT
+			if (userToken != null) {
+				if (userToken.getUserCode() != null) {
+					payloadBuilder.add("sourceCode", userToken.getUserCode());
+					payloadBuilder.add("userCode", userToken.getUserCode());
+				}
+			} else {
+				log.error("userToken is Null");
+			}
+
 			JsonObject payload = payloadBuilder.build();
-			kogitoUtils.triggerWorkflow(SELF, "testBal", payload);
-			return;
+			log.info("Payload = " + payload.toString());
+
+			// CHECK QUESTION
+			if (code.endsWith("CREATE_PER")) {
+				balService.createPersonBal("DEF_PERSON", content);
+			} else if (code.endsWith("CREATE_PER_BPMN")) {
+				kogitoUtils.triggerWorkflow(SELF, "testBal", payload);
+			} else {
+				kogitoUtils.triggerWorkflow(SELF, "testBal", payload);
+				// log.error("Invalid Question Code: " + msg.getData().getCode().substring("GADA_TAZ_".length()));
+			}
 		}
 
 		// test question eventIrvan

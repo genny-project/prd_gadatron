@@ -1,7 +1,7 @@
 #!/bin/bash
 productCode=${1:-gadatron}
 CONTENT=${2:-TAZ}
-questionCode=${3:-GADA_TAZ_BPMN_TST}
+questionCode=${3:-GADA_TAZ_DEFAULT}
 targetCode=${4:-PER_4EBC2BAD-C668-4526-8F03-8192B6BE82F9}
 sourceCode=-PER_5C1491C4-8AA6-40DC-8CAF-F2806D4737C4
 

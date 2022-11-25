@@ -62,8 +62,8 @@ public class WayanService {
      */
     void onStart(@Observes StartupEvent ev) {
         log.info("Wayan service is starting");
-        setupQuestionForm();
-        setupSimpleUserDetailsForm();
+//        setupQuestionForm();
+//        setupSimpleUserDetailsForm();
     }
 
     /**
