@@ -49,6 +49,9 @@ public class InternalConsumer {
 	@Inject
 	Events events;
 
+	@Inject
+	SearchCaching searchCaching;
+
 	/**
 	 * Execute on start up.
 	 *
@@ -56,7 +59,7 @@ public class InternalConsumer {
 	 */
 	void onStart(@Observes StartupEvent ev) {
 		service.fullServiceInit();
-		SearchCaching.saveToCache();
+		searchCaching.saveToCache(userToken.getProductCode());
 		roleCaching.saveToCache();
 	}
 
