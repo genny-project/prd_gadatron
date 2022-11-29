@@ -1,12 +1,7 @@
 package life.genny.gadatron.route;
 
-import com.google.common.reflect.TypeToken;
-
 import life.genny.gadatron.service.AmrizalService;
 import life.genny.gadatron.service.BalService;
-import org.jboss.logging.Logger;
-
-import com.google.common.reflect.TypeToken;
 import life.genny.gadatron.service.WayanService;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
@@ -17,6 +12,7 @@ import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -66,6 +62,8 @@ public class Events {
 
 		MessageData data = msg.getData();
 		String code = data.getCode();
+
+		log.info("message received: code: "+code);
 
 		if (userToken == null) {
 			log.error("userToken  is null - possible cause is no user logged in");
@@ -185,7 +183,6 @@ public class Events {
 					kogitoUtils.triggerWorkflow(SELF, "testWayan", payload);
 				}
 			}
-
 		}
 
 		// test question event
@@ -352,6 +349,22 @@ public class Events {
 			} else {
 				log.error("kogitoUtils is Null");
 			}
+		}
+
+		if (code.startsWith("QUE_WAYAN_")) {
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", "QUE_WAYAN_CREATEQUESTION_GRP")
+					.add("sourceCode", msg.getData().getSourceCode())
+					.add("entityCode", msg.getData().getTargetCode())
+					.add("targetCode", msg.getData().getTargetCode());
+//			String content = msg.getData().getContent();
+//			if (content != null) {
+//
+//			}
+			payloadBuilder.add("content", "Simple Question");
+
+			JsonObject payload = payloadBuilder.build();
+			kogitoUtils.triggerWorkflow(SELF, "testWayanQuestion", payload);
 		}
 
 	}
