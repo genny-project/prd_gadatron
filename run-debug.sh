@@ -17,13 +17,13 @@ echo "gadatron debug port ${PRD_GADATRON_DEBUG_PORT}"
 
 #export PRODUCT_CODES=${PRODUCT_CODES}
 export GENNY_SHOW_VALUES="TRUE"
-export GENNY_SERVICE_USERNAME=service
-#export GENNY_KEYCLOAK_URL=https://keycloak.gada.io
+export GENNY_SERVICE_USERNAME=${GENNY_SERVICE_USERNAME}
+export GENNY_KEYCLOAK_URL=${GENNY_KEYCLOAK_URL}
 export GENNY_API_URL=${gennyhost}:8280
 export GENNY_KAFKA_URL=${gennyhost}:9092
 export GENNY_CLIENT_ID=backend
 export GENNY_CLIENT_SECRET=${GENNY_CLIENT_SECRET}
-#export GENNY_REALM=gadatron
+export GENNY_REALM=${GENNY_REALM}
 export GENNY_KOGITO_SERVICE_URL=${host}:${port}
 export GENNY_KOGITO_DATAINDEX_HTTP_URL=${gennyhost}:8582
 export GENNY_KOGITO_DATAINDEX_WS_URL=ws://${rawhost}:8582

@@ -2,6 +2,7 @@ package life.genny.gadatron.route;
 
 import life.genny.gadatron.service.AmrizalService;
 import life.genny.gadatron.service.BalService;
+import life.genny.gadatron.service.GarService;
 import life.genny.gadatron.service.WayanService;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
@@ -54,6 +55,9 @@ public class Events {
 
 	@Inject
 	AmrizalService amService;
+
+	@Inject
+	GarService garService;
 
 	/**
 	 * @param msg
@@ -368,6 +372,29 @@ public class Events {
 
 			JsonObject payload = payloadBuilder.build();
 			kogitoUtils.triggerWorkflow(SELF, "testWayanQuestion", payload);
+		}
+
+		if (code.startsWith("GADA_GAR_CREATE_PER_")) {
+			String entityCode = garService.createPerson("DEF_PERSON",  data.getContent());
+			log.info("Create entityCode: " + entityCode);
+
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+				.add("questionCode", msg.getData().getCode().substring("GADA_GAR_CREATE_PER_".length()))
+				.add("userCode", userToken.getUserCode())
+				.add("sourceCode", userToken.getUserCode())
+				.add("entityCode", entityCode)
+				.add("targetCode", msg.getData().getTargetCode());
+
+			String content = data.getContent();
+			if (content != null) {
+				payloadBuilder.add("content", content);
+			}
+
+			JsonObject payload = payloadBuilder.build();
+			System.out.println("Payload = " + payload.toString());
+
+			kogitoUtils.triggerWorkflow(SELF, "testQuestionGardiary", payload);
+			return;
 		}
 	}
 
