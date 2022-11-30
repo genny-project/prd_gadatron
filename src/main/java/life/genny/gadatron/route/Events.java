@@ -200,11 +200,6 @@ public class Events {
 				payloadBuilder.add("content", content);
 
 				log.info("Content = " + content);
-				/* Load the LNK_DOT */
-//				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
-//				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
-//				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
-//				beUtils.updateBaseEntity(PRODUCT_CODE, target);
 			}
 
 			if (userToken != null) {
@@ -218,7 +213,7 @@ public class Events {
 			System.out.println("Payload = " + payload.toString());
 //			kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
 
-			log.info("Payload = " + payload.toString());
+			log.info("Payload = " + payload);
 
 			// kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
 			balService.createPersonBal("DEF_PERSON", content);
@@ -352,21 +347,28 @@ public class Events {
 		}
 
 		if (code.startsWith("QUE_WAYAN_")) {
+			String sourceCode = msg.getData().getSourceCode();
+			if (sourceCode == null || sourceCode.isEmpty()) return;
+			String nextQuestionCode = switch (code) {
+				case "QUE_WAYAN_CREATEQUESTION_VIEW" -> "QUE_WAYAN_CREATEQUESTION_GRP";
+				default -> "";
+			};
+
+			if (nextQuestionCode.isEmpty()) {
+				return;
+			}
+
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
-					.add("questionCode", "QUE_WAYAN_CREATEQUESTION_GRP")
-					.add("sourceCode", msg.getData().getSourceCode())
+					.add("questionCode", nextQuestionCode)
+					.add("sourceCode", sourceCode)
 					.add("entityCode", msg.getData().getTargetCode())
 					.add("targetCode", msg.getData().getTargetCode());
-//			String content = msg.getData().getContent();
-//			if (content != null) {
-//
-//			}
+
 			payloadBuilder.add("content", "Simple Question");
 
 			JsonObject payload = payloadBuilder.build();
 			kogitoUtils.triggerWorkflow(SELF, "testWayanQuestion", payload);
 		}
-
 	}
 
 }

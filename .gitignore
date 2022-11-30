@@ -41,3 +41,4 @@ nb-configuration.xml
 .env
 **/event.json
 scripts/**.txt
+**gadatron-git.properties

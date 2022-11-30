@@ -1,32 +1,30 @@
 package life.genny.gadatron.live.data;
 
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.List;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-
-import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.jboss.logging.Logger;
-
 import io.quarkus.runtime.StartupEvent;
 import io.smallrye.reactive.messaging.annotations.Blocking;
-import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.gadatron.cache.RoleCaching;
 import life.genny.gadatron.cache.SearchCaching;
 import life.genny.gadatron.route.Events;
+import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.SecurityUtils;
 import life.genny.serviceq.Service;
 import life.genny.serviceq.intf.GennyScopeInit;
+import org.eclipse.microprofile.reactive.messaging.Incoming;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+
+import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 
 @ApplicationScoped
 public class InternalConsumer {
@@ -131,4 +129,10 @@ public class InternalConsumer {
 		Instant end = Instant.now();
 		log.info("Duration = " + Duration.between(start, end).toMillis() + "ms");
 	}
+
+//	@Incoming("start_process_questions")
+//	@Blocking
+//	public static void startProcessQuestions(String data) {
+//		log.info("received data from start_process_questions: "+data);
+//	}
 }
