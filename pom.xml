@@ -11,7 +11,7 @@
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
     <quarkus.platform.version>2.14.2.Final</quarkus.platform.version>
-    <kogito.version>1.29.0.Final</kogito.version>
+    <kogito.version>1.31.0.Final</kogito.version>
     <version.org.optaplanner>8.29.0.Final</version.org.optaplanner>
     
     <deploy-plugin.version>3.0.0-M2</deploy-plugin.version>

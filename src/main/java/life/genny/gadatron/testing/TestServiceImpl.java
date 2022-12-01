@@ -7,7 +7,6 @@ import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
-import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 import org.jboss.logging.Logger;
 
@@ -28,9 +27,6 @@ public class TestServiceImpl implements TestService {
 
         @Inject
         UserToken userToken;
-
-        @Inject
-        QwandaUtils qwandaUtils;
 
         @Inject
         BaseEntityUtils beUtils;

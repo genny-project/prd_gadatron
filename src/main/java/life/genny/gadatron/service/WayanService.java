@@ -1,6 +1,7 @@
 package life.genny.gadatron.service;
 
 import io.quarkus.runtime.StartupEvent;
+import life.genny.gadatron.constants.WayanConstants;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.Question;
@@ -152,7 +153,12 @@ public class WayanService {
             qq.setCreateOnTrigger(true);
             qq.setDependency("Something");
             qq.setIcon(null);
+            try {
             databaseUtils.saveQuestionQuestion(qq);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                log.error("Error data: "+jsonb.toJson(qq));
+            }
         }
     }
 
@@ -177,10 +183,7 @@ public class WayanService {
         if (queChild == null) {
             Attribute attribute = findAttributeByCode(attributeCode);
             if (attribute == null) {
-                attribute = new Attribute();
-                attribute.setDataType(DataType.getInstance(valueTypeClass));
-                attribute.setCode(attributeCode);
-                attribute.setName(attributeCode.toLowerCase().replace("_", " "));
+                attribute = new Attribute(attributeCode, attributeCode.toLowerCase().replace("_", " "), DataType.getInstance(valueTypeClass));
                 attribute.setRealm(productCode);
                 attribute.setStatus(EEntityStatus.ACTIVE);
                 attribute.setDescription(attribute.getName());
@@ -192,9 +195,48 @@ public class WayanService {
             queChild = new Question(code, name, attribute, mandatory, null, placeholder);
             queChild.setIcon(null);
             queChild.setRealm(productCode);
-            queChild = databaseUtils.saveQuestion(queChild);
+            try {
+                queChild = databaseUtils.saveQuestion(queChild);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                log.error("Error data: "+jsonb.toJson(queChild));
+            }
         }
         return queChild;
+    }
+
+    public Long createQuestionFromEntity(String entityCode) {
+        BaseEntity be = beUtils.getBaseEntity(productCode, entityCode);
+        if (be != null) {
+            String questionCode = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONCODE, "");
+            String questionAttribute = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONATTRIBUTECODE, "PRI_NAME");
+            String questionName = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONNAME, "New Test Question");
+            String parentCode = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONPARENTCODE, "");
+            Integer weight = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONWEIGHT, 1);
+            Boolean mandatory = be.getValue(WayanConstants.PRI_WAYAN_QUESTIONMANDATORY, false);
+            String typeClassName = be.getValue(WayanConstants.PRI_WAYAN_QUESTION_TYPECLASSNAME, "");
+            if (typeClassName == null || typeClassName.isEmpty()) {
+                typeClassName = "java.lang.String";
+            }
+            log.info("code  : "+questionCode);
+            log.info("attr  : "+questionAttribute);
+            log.info("name  : "+questionName);
+            log.info("parent: "+parentCode);
+            log.info("weight: "+weight);
+            log.info("mndtr : "+mandatory);
+            log.info("type  : "+typeClassName);
+            Question child = createAQuestion(questionCode, questionAttribute, typeClassName, mandatory, questionName, null);
+
+            if (parentCode != null) {
+                Question parent = databaseUtils.findQuestionByCode(productCode, parentCode);
+                if (parent == null) {
+                    parent = createAQuestion(parentCode, "QQQ_QUESTION_GROUP", "java.lang.String", false, parentCode.replaceAll("_", " ").toLowerCase(), null);
+                }
+                createQuestionQuestion(parent, child, weight, mandatory);
+            }
+            return child.getId();
+        }
+        return null;
     }
 
     private Attribute findAttributeByCode(String code) {
@@ -231,24 +273,28 @@ public class WayanService {
             final String name = content;
             BaseEntity personDef = beUtils.getBaseEntity(entityDefinition);
             BaseEntity person = beUtils.create(personDef, name);
-            String[] names = name.split(" ");
-            if (names.length > 0) {
-                person = beUtils.addValue(person, "PRI_FIRSTNAME", names[0]);
-                person = beUtils.addValue(person, "PRI_NAME", name);
+            if (entityDefinition.equalsIgnoreCase("DEF_PERSON")) {
+                String[] names = name.split(" ");
+                if (names.length > 0) {
+                    person = beUtils.addValue(person, "PRI_FIRSTNAME", names[0]);
+                    person = beUtils.addValue(person, "PRI_NAME", name);
 
-                StringBuilder lastName = new StringBuilder();
-                for (int i = 1; i < names.length; i++) {
-                    if (lastName.length() > 0) {
-                        lastName.append(" ");
+                    StringBuilder lastName = new StringBuilder();
+                    for (int i = 1; i < names.length; i++) {
+                        if (lastName.length() > 0) {
+                            lastName.append(" ");
+                        }
+                        lastName.append(names[i]);
                     }
-                    lastName.append(names[i]);
+                    person = beUtils.addValue(person, "PRI_LASTNAME", lastName.toString());
+                } else {
+                    person = beUtils.addValue(person, "PRI_FIRSTNAME", name);
                 }
-                person = beUtils.addValue(person, "PRI_LASTNAME", lastName.toString());
+                person = beUtils.addValue(person, "PRI_UUID", person.getCode().substring("PER_".length()));
+                person = beUtils.addValue(person, "PRI_EMAIL", String.join("_", names) + "@gada.io".toLowerCase().trim());
             } else {
-                person = beUtils.addValue(person, "PRI_FIRSTNAME", name);
+                person = beUtils.addValue(person, "PRI_NAME", name);
             }
-            person = beUtils.addValue(person, "PRI_UUID" , person.getCode().substring("PER_".length()));
-            person = beUtils.addValue(person,"PRI_EMAIL", String.join("_", names)+"@gada.io".toLowerCase().trim());
             beUtils.updateBaseEntity(person);
             log.info("New Person:"+person.getCode());
             return person.getCode();
