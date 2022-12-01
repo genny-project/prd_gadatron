@@ -396,6 +396,11 @@ public class Events {
 			kogitoUtils.triggerWorkflow(SELF, "testQuestionGardiary", payload);
 			return;
 		}
+
+		if (code.startsWith("QUE_TEST_GARDIARY")) {
+			log.info("Entering " + code);
+			return;
+		}
 	}
 
 }
