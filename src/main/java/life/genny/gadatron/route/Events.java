@@ -3,7 +3,6 @@ package life.genny.gadatron.route;
 import life.genny.gadatron.service.AmrizalService;
 import life.genny.gadatron.service.BalService;
 import life.genny.gadatron.service.GarService;
-import life.genny.gadatron.service.WayanService;
 import life.genny.kogito.common.utils.KogitoUtils;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
@@ -46,9 +45,6 @@ public class Events {
 
 	@Inject
 	BaseEntityUtils beUtils;
-
-	@Inject
-	WayanService wayanService;
 
 	@Inject
 	BalService balService;
@@ -355,6 +351,13 @@ public class Events {
 			if (sourceCode == null || sourceCode.isEmpty()) return;
 			String nextQuestionCode = switch (code) {
 				case "QUE_WAYAN_CREATEQUESTION_VIEW" -> "QUE_WAYAN_CREATEQUESTION_GRP";
+				case "QUE_WAYAN_CREATEBALIPERSON_VIEW" -> "QUE_BALI_PERSON_GRP";
+				default -> "";
+			};
+
+			String entityCode = switch (code) {
+				case "QUE_WAYAN_CREATEQUESTION_VIEW" -> "DEF_QUESTION";
+				case "QUE_WAYAN_CREATEBALIPERSON_VIEW" -> "DEF_BALI_PERSON";
 				default -> "";
 			};
 
@@ -365,13 +368,14 @@ public class Events {
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
 					.add("questionCode", nextQuestionCode)
 					.add("sourceCode", sourceCode)
-					.add("entityCode", msg.getData().getTargetCode())
-					.add("targetCode", msg.getData().getTargetCode());
+					.add("targetCode", msg.getData().getTargetCode())
+					.add("entityCode", entityCode);
 
 			payloadBuilder.add("content", "Simple Question");
 
 			JsonObject payload = payloadBuilder.build();
 			kogitoUtils.triggerWorkflow(SELF, "testWayanQuestion", payload);
+			return;
 		}
 
 		if (code.startsWith("GADA_GAR_CREATE_PER_")) {
