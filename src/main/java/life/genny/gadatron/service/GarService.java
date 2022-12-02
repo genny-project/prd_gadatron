@@ -109,7 +109,7 @@ public class GarService {
         questionQuestion = createQuestionQuestion(realm, question, "QUE_LASTNAME", 4.0, false);
         log.info("QuestionQuestion 5: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_DOB", 5.0, true);
+        questionQuestion = createQuestionQuestion(realm, question, "QUE_MOBILE", 5.0, true);
         log.info("QuestionQuestion 6: " + questionQuestion);
     }
 
