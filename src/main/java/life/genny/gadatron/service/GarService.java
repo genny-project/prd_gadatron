@@ -64,8 +64,16 @@ public class GarService {
         dataType.setDttCode("DTT_EVENT");
 
         // create attribute
-        Attribute attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
-        attribute = qwandaUtils.saveAttribute(realm, attribute);
+        //Attribute attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
+        //attribute = qwandaUtils.saveAttribute(realm, attribute);
+        String attributeCode = "EVT_TEST_GARDIARY";
+        Attribute attribute = findAttributeByCode(realm, attributeCode);
+        if (attribute == null) {
+            attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
+            attribute.setRealm(realm);
+            dbUtils.saveAttribute(attribute);
+            attribute = findAttributeByCode(realm, attributeCode);
+        }
         log.info("Attribute: " + attribute);
 
         // create question
@@ -106,5 +114,14 @@ public class GarService {
         questionQuestion.setMandatory(mandatory);
         questionQuestion.setRealm(realm);
         return dbUtils.saveQuestionQuestion(questionQuestion);
+    }
+
+    public Attribute findAttributeByCode(String realm, String code) {
+        try {
+            return dbUtils.findAttributeByCode(realm, code);
+        } catch (Exception e) {
+            log.error("Error:", e);
+            return null;
+        }
     }
 }
