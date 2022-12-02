@@ -86,6 +86,8 @@ public class GarService {
         Question queSidebar = dbUtils.findQuestionByCode(realm, "QUE_SIDEBAR"); // this shouldn't be null
 
         QuestionQuestion questionQuestion = new QuestionQuestion(queSidebar, question, 5.0);
+        questionQuestion.setFormTrigger(Boolean.FALSE);
+        questionQuestion.setCreateOnTrigger(Boolean.FALSE);
         questionQuestion.setRealm(realm);
         dbUtils.saveQuestionQuestion(questionQuestion);
         log.info("QuestionQuestion 1: " + questionQuestion);
@@ -112,6 +114,8 @@ public class GarService {
         log.info("targetQuestion: " + targetQuestion);
         QuestionQuestion questionQuestion = new QuestionQuestion(sourceQuestion, targetQuestion, weight);
         questionQuestion.setMandatory(mandatory);
+        questionQuestion.setFormTrigger(Boolean.FALSE);
+        questionQuestion.setCreateOnTrigger(Boolean.FALSE);
         questionQuestion.setRealm(realm);
         return dbUtils.saveQuestionQuestion(questionQuestion);
     }
