@@ -77,13 +77,17 @@ public class GarService {
         log.info("Attribute: " + attribute);
 
         // create question
-        Question question = new Question("QUE_TEST_GARDIARY", "Gardiary Question", attribute);
-        question.setRealm(realm);
-        question = dbUtils.saveQuestion(question);
+        String questionCode = "QUE_TEST_GARDIARY";
+        Question question = findQuestionByCode(realm, questionCode);
+        if(question == null) {
+            question = new Question(questionCode, "Gardiary Question", attribute);
+            question.setRealm(realm);
+            question = dbUtils.saveQuestion(question);
+        }
         log.info("Question: " + question);
 
         // create question_question (sourceCode: QUE_SIDEBAR)
-        Question queSidebar = dbUtils.findQuestionByCode(realm, "QUE_SIDEBAR"); // this shouldn't be null
+        Question queSidebar = findQuestionByCode(realm, "QUE_SIDEBAR"); // this shouldn't be null, no need to check
 
         QuestionQuestion questionQuestion = new QuestionQuestion(queSidebar, question, 5.0);
         questionQuestion.setFormTrigger(Boolean.FALSE);
@@ -123,6 +127,15 @@ public class GarService {
     public Attribute findAttributeByCode(String realm, String code) {
         try {
             return dbUtils.findAttributeByCode(realm, code);
+        } catch (Exception e) {
+            log.error("Error:", e);
+            return null;
+        }
+    }
+
+    public Question findQuestionByCode(String realm, String code) {
+        try {
+            return dbUtils.findQuestionByCode(realm, code);
         } catch (Exception e) {
             log.error("Error:", e);
             return null;
