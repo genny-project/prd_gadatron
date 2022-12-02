@@ -1,27 +1,26 @@
 package life.genny.gadatron.service;
 
-import java.lang.invoke.MethodHandles;
-import java.util.List;
+import io.quarkus.runtime.StartupEvent;
+import life.genny.qwandaq.EEntityStatus;
+import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.search.SearchEntity;
+import life.genny.qwandaq.entity.search.trait.Filter;
+import life.genny.qwandaq.entity.search.trait.Operator;
+import life.genny.qwandaq.models.ServiceToken;
+import life.genny.qwandaq.models.UserToken;
+import life.genny.qwandaq.utils.BaseEntityUtils;
+import life.genny.qwandaq.utils.QwandaUtils;
+import life.genny.qwandaq.utils.SearchUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
-
-import io.quarkus.runtime.StartupEvent;
-import life.genny.qwandaq.models.ServiceToken;
-import org.jboss.logging.Logger;
-
-import life.genny.qwandaq.EEntityStatus;
-import life.genny.qwandaq.entity.BaseEntity;
-import life.genny.qwandaq.entity.search.SearchEntity;
-import life.genny.qwandaq.entity.search.trait.Filter;
-import life.genny.qwandaq.entity.search.trait.Operator;
-import life.genny.qwandaq.models.UserToken;
-import life.genny.qwandaq.utils.BaseEntityUtils;
-import life.genny.qwandaq.utils.QwandaUtils;
-import life.genny.qwandaq.utils.SearchUtils;
+import java.lang.invoke.MethodHandles;
+import java.util.List;
 
 @ApplicationScoped
 public class IrvanService {
@@ -34,7 +33,8 @@ public class IrvanService {
         // get product code from git properties
         // set to be dynamic
         //
-        static final String productCode = "gadatron";
+        @ConfigProperty(name = "quarkus.application.name", defaultValue = "gadatron")
+        public String productCode;
 
         // TO-DO
         // Try to use Service User Token
