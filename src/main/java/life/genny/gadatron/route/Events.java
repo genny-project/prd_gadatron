@@ -379,14 +379,13 @@ public class Events {
 		}
 
 		if (code.startsWith("GADA_GAR_CREATE_PER_")) {
-			String entityCode = garService.createPerson("DEF_PERSON",  data.getContent());
-			log.info("Create entityCode: " + entityCode);
-
+			//String entityCode = garService.createPerson("DEF_PERSON",  data.getContent());
+			//log.info("Create entityCode: " + entityCode);
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
 				.add("questionCode", msg.getData().getCode().substring("GADA_GAR_CREATE_PER_".length()))
 				.add("userCode", userToken.getUserCode())
 				.add("sourceCode", userToken.getUserCode())
-				.add("entityCode", entityCode)
+				//.add("entityCode", entityCode)
 				.add("targetCode", msg.getData().getTargetCode());
 
 			String content = data.getContent();
@@ -397,12 +396,22 @@ public class Events {
 			JsonObject payload = payloadBuilder.build();
 			System.out.println("Payload = " + payload.toString());
 
-			kogitoUtils.triggerWorkflow(SELF, "testQuestionGardiary", payload);
+			kogitoUtils.triggerWorkflow(SELF, "testPersonGardiary", payload);
 			return;
 		}
 
-		if (code.startsWith("QUE_TEST_GARDIARY")) {
+		if (code.equals("QUE_TEST_GARDIARY")) {
 			log.info("Entering " + code);
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+				.add("questionCode", code)
+				.add("userCode", userToken.getUserCode())
+				.add("sourceCode", userToken.getUserCode())
+				.add("targetCode", msg.getData().getTargetCode());
+
+			JsonObject payload = payloadBuilder.build();
+			System.out.println("Payload = " + payload.toString());
+
+			kogitoUtils.triggerWorkflow(SELF, "testQuestionGardiary", payload);
 			return;
 		}
 	}
