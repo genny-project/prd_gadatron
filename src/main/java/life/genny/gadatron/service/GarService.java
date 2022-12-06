@@ -1,4 +1,5 @@
 package life.genny.gadatron.service;
+
 import io.quarkus.runtime.StartupEvent;
 import life.genny.qwandaq.Question;
 import life.genny.qwandaq.QuestionQuestion;
@@ -31,11 +32,11 @@ public class GarService {
     DatabaseUtils dbUtils;
 
     @ConfigProperty(name = "GENNY_CLIENT_ID")
-    String realm;
+    String realm; // TODO: This needs to be changed.
 
     void onStart(@Observes StartupEvent ev) {
         log.info("Gar service is starting with realm: " + realm);
-        setupQuestionData();
+        // setupQuestionData();
     }
 
     public String createPerson(String defCode, String content) {
@@ -64,8 +65,9 @@ public class GarService {
         dataType.setDttCode("DTT_EVENT");
 
         // create attribute
-        //Attribute attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
-        //attribute = qwandaUtils.saveAttribute(realm, attribute);
+        // Attribute attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test
+        // Event", dataType);
+        // attribute = qwandaUtils.saveAttribute(realm, attribute);
         String attributeCode = "EVT_TEST_GARDIARY";
         Attribute attribute = findAttributeByCode(realm, attributeCode);
         if (attribute == null) {
@@ -79,7 +81,7 @@ public class GarService {
         // create question
         String questionCode = "QUE_TEST_GARDIARY";
         Question question = findQuestionByCode(realm, questionCode);
-        if(question == null) {
+        if (question == null) {
             question = new Question(questionCode, "Gardiary Question", attribute);
             question.setRealm(realm);
             question = dbUtils.saveQuestion(question);
@@ -113,7 +115,8 @@ public class GarService {
         log.info("QuestionQuestion 6: " + questionQuestion);
     }
 
-    private QuestionQuestion createQuestionQuestion(String realm, Question sourceQuestion, String targetQuestionCode, Double weight, Boolean mandatory) {
+    private QuestionQuestion createQuestionQuestion(String realm, Question sourceQuestion, String targetQuestionCode,
+            Double weight, Boolean mandatory) {
         Question targetQuestion = dbUtils.findQuestionByCode(realm, targetQuestionCode);
         log.info("targetQuestion: " + targetQuestion);
         QuestionQuestion questionQuestion = new QuestionQuestion(sourceQuestion, targetQuestion, weight);
