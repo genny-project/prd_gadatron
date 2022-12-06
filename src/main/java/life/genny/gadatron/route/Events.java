@@ -406,7 +406,7 @@ public class Events {
 				.add("questionCode", code)
 				.add("userCode", userToken.getUserCode())
 				.add("sourceCode", userToken.getUserCode())
-				.add("targetCode", msg.getData().getTargetCode());
+				.add("targetCode", GarService.personEntityCode);
 
 			JsonObject payload = payloadBuilder.build();
 			System.out.println("Payload = " + payload.toString());
