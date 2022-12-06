@@ -403,7 +403,7 @@ public class Events {
 		if (code.equals("QUE_TEST_GARDIARY")) {
 			log.info("Entering " + code);
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
-				.add("questionCode", code)
+				.add("questionCode", "QUE_TEST_GARDIARY_GRP")
 				.add("userCode", userToken.getUserCode())
 				.add("sourceCode", userToken.getUserCode())
 				.add("targetCode", GarService.personEntityCode);

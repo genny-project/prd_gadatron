@@ -67,11 +67,11 @@ public class GarService {
             String firstname = "Michael";
             String lastname = "Brown";
             BaseEntity defBE = beUtils.getBaseEntityOrNull(realm, "DEF_PERSON");
-            be = beUtils.create(defBE, firstname + " " + lastname);
+            be = beUtils.create(defBE, firstname + " " + lastname, personEntityCode);
             log.info("BE: " + be);
 
             be = beUtils.addValue(be, "PRI_DOB", "");
-            be = beUtils.addValue(be, "PRI_EMAIL", firstname.toLowerCase() + "_" + lastname + "@gmail.com");
+            be = beUtils.addValue(be, "PRI_EMAIL", firstname.toLowerCase() + "_" + lastname.toLowerCase() + "@gmail.com");
             be = beUtils.addValue(be, "PRI_NAME", firstname + " " + lastname);
             be = beUtils.addValue(be, "PRI_FIRSTNAME", firstname);
             be = beUtils.addValue(be, "PRI_LASTNAME", lastname);
@@ -100,7 +100,7 @@ public class GarService {
         }
         log.info("Attribute: " + attribute);
 
-        // create question
+        // create question (for sidebar)
         String questionCode = "QUE_TEST_GARDIARY";
         Question question = findQuestionByCode(realm, questionCode);
         if (question == null) {
@@ -109,6 +109,18 @@ public class GarService {
             question = dbUtils.saveQuestion(question);
         }
         log.info("Question: " + question);
+
+        // create question (for form)
+        String questionGroupCode = "QUE_TEST_GARDIARY_GRP";
+        Question questionGroup = findQuestionByCode(realm, questionGroupCode);
+        if (questionGroup == null) {
+            Attribute attQueGroup = findAttributeByCode(realm, "QQQ_QUESTION_GROUP"); // should exist
+            questionGroup = new Question(questionGroupCode, "Gardiary Question Group", attQueGroup);
+            questionGroup.setRealm(realm);
+            questionGroup = dbUtils.saveQuestion(questionGroup);
+        }
+        log.info("Question Group: " + questionGroup);
+
 
         // create question_question (sourceCode: QUE_SIDEBAR)
         Question queSidebar = findQuestionByCode(realm, "QUE_SIDEBAR"); // this shouldn't be null, no need to check
@@ -120,23 +132,23 @@ public class GarService {
         dbUtils.saveQuestionQuestion(questionQuestion);
         log.info("QuestionQuestion 1: " + questionQuestion);
 
-        // create question_question (sourceCode: QUE_TEST_GARDIARY)
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_DOB", 1.0, false);
+        // create question_question (sourceCode: QUE_TEST_GARDIARY_GRP)
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_DOB", 1.0, false);
         log.info("QuestionQuestion 2: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_EMAIL", 2.0, true);
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_EMAIL", 2.0, true);
         log.info("QuestionQuestion 3: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_NAME", 3.0, true);
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_NAME", 3.0, true);
         log.info("QuestionQuestion 4: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_FIRSTNAME", 4.0, true);
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_FIRSTNAME", 4.0, true);
         log.info("QuestionQuestion 5: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_LASTNAME", 5.0, false);
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_LASTNAME", 5.0, false);
         log.info("QuestionQuestion 6: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, question, "QUE_MOBILE", 6.0, true);
+        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_MOBILE", 6.0, true);
         log.info("QuestionQuestion 7: " + questionQuestion);
     }
 
