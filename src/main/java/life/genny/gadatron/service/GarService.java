@@ -32,12 +32,13 @@ public class GarService {
     @Inject
     DatabaseUtils dbUtils;
 
-    @ConfigProperty(name = "GENNY_CLIENT_ID")
-    String realm; // TODO: This needs to be changed.
+    @ConfigProperty(name = "quarkus.application.name", defaultValue = "gadatron")
+    public String productCode;
 
     void onStart(@Observes StartupEvent ev) {
-        log.info("Gar service is starting with realm: " + realm);
+        log.info("Gar service is starting with productCode: " + productCode);
         setupQuestionData();
+        log.info("Completed GarService init startup");
     }
 
     public String createPerson(String defCode, String content) {
@@ -45,7 +46,7 @@ public class GarService {
         log.info("Firstname: " + firstname);
         String lastname = "" + new Date().getTime();
 
-        BaseEntity defBE = beUtils.getBaseEntityOrNull(realm, defCode);
+        BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, defCode);
         BaseEntity be = beUtils.create(defBE, firstname + " " + lastname);
         log.info("BE: " + be);
 
@@ -60,18 +61,19 @@ public class GarService {
     }
 
     public void setupQuestionData() {
-        BaseEntity be = beUtils.getBaseEntityOrNull(realm, personEntityCode);
+        BaseEntity be = beUtils.getBaseEntityOrNull(productCode, personEntityCode);
         log.info("BE: " + be);
 
-        if(be == null) {
+        if (be == null) {
             String firstname = "Michael";
             String lastname = "Brown";
-            BaseEntity defBE = beUtils.getBaseEntityOrNull(realm, "DEF_PERSON");
+            BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, "DEF_PERSON");
             be = beUtils.create(defBE, firstname + " " + lastname, personEntityCode);
             log.info("BE: " + be);
 
             be = beUtils.addValue(be, "PRI_DOB", "");
-            be = beUtils.addValue(be, "PRI_EMAIL", firstname.toLowerCase() + "_" + lastname.toLowerCase() + "@gmail.com");
+            be = beUtils.addValue(be, "PRI_EMAIL",
+                    firstname.toLowerCase() + "_" + lastname.toLowerCase() + "@gmail.com");
             be = beUtils.addValue(be, "PRI_NAME", firstname + " " + lastname);
             be = beUtils.addValue(be, "PRI_FIRSTNAME", firstname);
             be = beUtils.addValue(be, "PRI_LASTNAME", lastname);
@@ -89,93 +91,94 @@ public class GarService {
         // create attribute
         // Attribute attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test
         // Event", dataType);
-        // attribute = qwandaUtils.saveAttribute(realm, attribute);
+        // attribute = qwandaUtils.saveAttribute(productCode, attribute);
         String attributeCode = "EVT_TEST_GARDIARY";
-        Attribute attribute = findAttributeByCode(realm, attributeCode);
+        Attribute attribute = findAttributeByCode(productCode, attributeCode);
         if (attribute == null) {
             attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
-            attribute.setRealm(realm);
+            attribute.setRealm(productCode);
             dbUtils.saveAttribute(attribute);
-            attribute = findAttributeByCode(realm, attributeCode);
+            attribute = findAttributeByCode(productCode, attributeCode);
         }
         log.info("Attribute: " + attribute);
 
         // create question (for sidebar)
         String questionCode = "QUE_TEST_GARDIARY";
-        Question question = findQuestionByCode(realm, questionCode);
+        Question question = findQuestionByCode(productCode, questionCode);
         if (question == null) {
             question = new Question(questionCode, "Gardiary Question", attribute);
-            question.setRealm(realm);
+            question.setRealm(productCode);
             question = dbUtils.saveQuestion(question);
         }
         log.info("Question: " + question);
 
         // create question (for form)
         String questionGroupCode = "QUE_TEST_GARDIARY_GRP";
-        Question questionGroup = findQuestionByCode(realm, questionGroupCode);
+        Question questionGroup = findQuestionByCode(productCode, questionGroupCode);
         if (questionGroup == null) {
-            Attribute attQueGroup = findAttributeByCode(realm, "QQQ_QUESTION_GROUP"); // should exist
+            Attribute attQueGroup = findAttributeByCode(productCode, "QQQ_QUESTION_GROUP"); // should exist
             questionGroup = new Question(questionGroupCode, "Gardiary Question Group", attQueGroup);
-            questionGroup.setRealm(realm);
+            questionGroup.setRealm(productCode);
             questionGroup = dbUtils.saveQuestion(questionGroup);
         }
         log.info("Question Group: " + questionGroup);
 
-
         // create question_question (sourceCode: QUE_SIDEBAR)
-        Question queSidebar = findQuestionByCode(realm, "QUE_SIDEBAR"); // this shouldn't be null, no need to check
+        Question queSidebar = findQuestionByCode(productCode, "QUE_SIDEBAR"); // this shouldn't be null, no need to
+                                                                              // check
 
         QuestionQuestion questionQuestion = new QuestionQuestion(queSidebar, question, 5.0);
         questionQuestion.setFormTrigger(Boolean.FALSE);
         questionQuestion.setCreateOnTrigger(Boolean.FALSE);
-        questionQuestion.setRealm(realm);
+        questionQuestion.setRealm(productCode);
         dbUtils.saveQuestionQuestion(questionQuestion);
         log.info("QuestionQuestion 1: " + questionQuestion);
 
         // create question_question (sourceCode: QUE_TEST_GARDIARY_GRP)
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_DOB", 1.0, false);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_DOB", 1.0, false);
         log.info("QuestionQuestion 2: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_EMAIL", 2.0, true);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_EMAIL", 2.0, true);
         log.info("QuestionQuestion 3: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_NAME", 3.0, true);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_NAME", 3.0, true);
         log.info("QuestionQuestion 4: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_FIRSTNAME", 4.0, true);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_FIRSTNAME", 4.0, true);
         log.info("QuestionQuestion 5: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_LASTNAME", 5.0, false);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_LASTNAME", 5.0, false);
         log.info("QuestionQuestion 6: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(realm, questionGroup, "QUE_MOBILE", 6.0, true);
+        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_MOBILE", 6.0, true);
         log.info("QuestionQuestion 7: " + questionQuestion);
     }
 
-    private QuestionQuestion createQuestionQuestion(String realm, Question sourceQuestion, String targetQuestionCode,
+    private QuestionQuestion createQuestionQuestion(String productCode, Question sourceQuestion,
+            String targetQuestionCode,
             Double weight, Boolean mandatory) {
-        Question targetQuestion = dbUtils.findQuestionByCode(realm, targetQuestionCode);
+        Question targetQuestion = dbUtils.findQuestionByCode(productCode, targetQuestionCode);
         log.info("targetQuestion: " + targetQuestion);
         QuestionQuestion questionQuestion = new QuestionQuestion(sourceQuestion, targetQuestion, weight);
         questionQuestion.setMandatory(mandatory);
         questionQuestion.setFormTrigger(Boolean.FALSE);
         questionQuestion.setCreateOnTrigger(Boolean.FALSE);
-        questionQuestion.setRealm(realm);
+        questionQuestion.setRealm(productCode);
         return dbUtils.saveQuestionQuestion(questionQuestion);
     }
 
-    public Attribute findAttributeByCode(String realm, String code) {
+    public Attribute findAttributeByCode(String productCode, String code) {
         try {
-            return dbUtils.findAttributeByCode(realm, code);
+            return dbUtils.findAttributeByCode(productCode, code);
         } catch (Exception e) {
             log.error("Error:", e);
             return null;
         }
     }
 
-    public Question findQuestionByCode(String realm, String code) {
+    public Question findQuestionByCode(String productCode, String code) {
         try {
-            return dbUtils.findQuestionByCode(realm, code);
+            return dbUtils.findQuestionByCode(productCode, code);
         } catch (Exception e) {
             log.error("Error:", e);
             return null;
