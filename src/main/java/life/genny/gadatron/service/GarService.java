@@ -9,6 +9,8 @@ import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.DatabaseUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
+import life.genny.serviceq.Service;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -24,6 +26,9 @@ public class GarService {
     public static final String personEntityCode = "PER_D0E77A02-8D40-4C37-9C54-9DB9EC99";
 
     @Inject
+    Service service;
+
+    @Inject
     BaseEntityUtils beUtils;
 
     @Inject
@@ -37,6 +42,7 @@ public class GarService {
 
     void onStart(@Observes StartupEvent ev) {
         log.info("Gar service is starting with productCode: " + productCode);
+        service.initCache(); // TODO: This is a HACK!!!
         setupQuestionData();
         log.info("Completed GarService init startup");
     }
