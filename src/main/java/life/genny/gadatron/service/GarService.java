@@ -43,7 +43,7 @@ public class GarService {
     void onStart(@Observes StartupEvent ev) {
         log.info("Gar service is starting with productCode: " + productCode);
         service.initCache(); // TODO: This is a HACK!!!
-        setupQuestionData();
+        // setupQuestionData();
         log.info("Completed GarService init startup");
     }
 
