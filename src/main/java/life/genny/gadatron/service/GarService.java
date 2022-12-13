@@ -1,6 +1,7 @@
 package life.genny.gadatron.service;
 
 import io.quarkus.runtime.StartupEvent;
+import life.genny.kogito.common.models.Product;
 import life.genny.qwandaq.Question;
 import life.genny.qwandaq.QuestionQuestion;
 import life.genny.qwandaq.attribute.Attribute;
@@ -37,11 +38,11 @@ public class GarService {
     @Inject
     DatabaseUtils dbUtils;
 
-    @ConfigProperty(name = "quarkus.application.name", defaultValue = "gadatron")
-    public String productCode;
+    @Inject
+    Product product;
 
     void onStart(@Observes StartupEvent ev) {
-        log.info("Gar service is starting with productCode: " + productCode);
+        log.info("Gar service is starting with productCode: " + product.getProductCode());
         service.initCache(); // TODO: This is a HACK!!!
         // setupQuestionData();
         log.info("Completed GarService init startup");
@@ -52,7 +53,7 @@ public class GarService {
         log.info("Firstname: " + firstname);
         String lastname = "" + new Date().getTime();
 
-        BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, defCode);
+        BaseEntity defBE = beUtils.getBaseEntityOrNull(product.getProductCode(), defCode);
         BaseEntity be = beUtils.create(defBE, firstname + " " + lastname);
         log.info("BE: " + be);
 
@@ -67,13 +68,13 @@ public class GarService {
     }
 
     public void setupQuestionData() {
-        BaseEntity be = beUtils.getBaseEntityOrNull(productCode, personEntityCode);
+        BaseEntity be = beUtils.getBaseEntityOrNull(product.getProductCode(), personEntityCode);
         log.info("BE: " + be);
 
         if (be == null) {
             String firstname = "Michael";
             String lastname = "Brown";
-            BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, "DEF_PERSON");
+            BaseEntity defBE = beUtils.getBaseEntityOrNull(product.getProductCode(), "DEF_PERSON");
             be = beUtils.create(defBE, firstname + " " + lastname, personEntityCode);
             log.info("BE: " + be);
 
@@ -99,64 +100,64 @@ public class GarService {
         // Event", dataType);
         // attribute = qwandaUtils.saveAttribute(productCode, attribute);
         String attributeCode = "EVT_TEST_GARDIARY";
-        Attribute attribute = findAttributeByCode(productCode, attributeCode);
+        Attribute attribute = findAttributeByCode(product.getProductCode(), attributeCode);
         if (attribute == null) {
             attribute = new Attribute("EVT_TEST_GARDIARY", "Gardiary Test Event", dataType);
-            attribute.setRealm(productCode);
+            attribute.setRealm(product.getProductCode());
             dbUtils.saveAttribute(attribute);
-            attribute = findAttributeByCode(productCode, attributeCode);
+            attribute = findAttributeByCode(product.getProductCode(), attributeCode);
         }
         log.info("Attribute: " + attribute);
 
         // create question (for sidebar)
         String questionCode = "QUE_TEST_GARDIARY";
-        Question question = findQuestionByCode(productCode, questionCode);
+        Question question = findQuestionByCode(product.getProductCode(), questionCode);
         if (question == null) {
             question = new Question(questionCode, "Gardiary Question", attribute);
-            question.setRealm(productCode);
+            question.setRealm(product.getProductCode());
             question = dbUtils.saveQuestion(question);
         }
         log.info("Question: " + question);
 
         // create question (for form)
         String questionGroupCode = "QUE_TEST_GARDIARY_GRP";
-        Question questionGroup = findQuestionByCode(productCode, questionGroupCode);
+        Question questionGroup = findQuestionByCode(product.getProductCode(), questionGroupCode);
         if (questionGroup == null) {
-            Attribute attQueGroup = findAttributeByCode(productCode, "QQQ_QUESTION_GROUP"); // should exist
+            Attribute attQueGroup = findAttributeByCode(product.getProductCode(), "QQQ_QUESTION_GROUP"); // should exist
             questionGroup = new Question(questionGroupCode, "Gardiary Question Group", attQueGroup);
-            questionGroup.setRealm(productCode);
+            questionGroup.setRealm(product.getProductCode());
             questionGroup = dbUtils.saveQuestion(questionGroup);
         }
         log.info("Question Group: " + questionGroup);
 
         // create question_question (sourceCode: QUE_SIDEBAR)
-        Question queSidebar = findQuestionByCode(productCode, "QUE_SIDEBAR"); // this shouldn't be null, no need to
+        Question queSidebar = findQuestionByCode(product.getProductCode(), "QUE_SIDEBAR"); // this shouldn't be null, no need to
                                                                               // check
 
         QuestionQuestion questionQuestion = new QuestionQuestion(queSidebar, question, 5.0);
         questionQuestion.setFormTrigger(Boolean.FALSE);
         questionQuestion.setCreateOnTrigger(Boolean.FALSE);
-        questionQuestion.setRealm(productCode);
+        questionQuestion.setRealm(product.getProductCode());
         dbUtils.saveQuestionQuestion(questionQuestion);
         log.info("QuestionQuestion 1: " + questionQuestion);
 
         // create question_question (sourceCode: QUE_TEST_GARDIARY_GRP)
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_DOB", 1.0, false);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_DOB", 1.0, false);
         log.info("QuestionQuestion 2: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_EMAIL", 2.0, true);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_EMAIL", 2.0, true);
         log.info("QuestionQuestion 3: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_NAME", 3.0, true);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_NAME", 3.0, true);
         log.info("QuestionQuestion 4: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_FIRSTNAME", 4.0, true);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_FIRSTNAME", 4.0, true);
         log.info("QuestionQuestion 5: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_LASTNAME", 5.0, false);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_LASTNAME", 5.0, false);
         log.info("QuestionQuestion 6: " + questionQuestion);
 
-        questionQuestion = createQuestionQuestion(productCode, questionGroup, "QUE_MOBILE", 6.0, true);
+        questionQuestion = createQuestionQuestion(product.getProductCode(), questionGroup, "QUE_MOBILE", 6.0, true);
         log.info("QuestionQuestion 7: " + questionQuestion);
     }
 
