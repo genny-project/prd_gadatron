@@ -1,6 +1,7 @@
 package life.genny.gadatron.cache;
 
 import life.genny.qwandaq.attribute.Attribute;
+import life.genny.qwandaq.datatype.capability.core.node.CapabilityMode;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static life.genny.gadatron.constants.GadatronConstants.*;
-import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.ALL;
+import static life.genny.qwandaq.datatype.capability.core.node.PermissionMode.*;
 
 @ApplicationScoped
 public class RoleCaching {
@@ -41,14 +42,20 @@ public class RoleCaching {
 	static final String productCode = "gadatron";
 
 	public void saveToCache() {
+
+		// Not keen on storing this map for longer than we have to
+		// Get capabilities
 		Map<String, Attribute> capabilities = loadCapabilityAttributes();
 
-		// admin role
-		BaseEntity admin = new RoleBuilder(ADMIN_ROLE, "Admin", PRODUCT_CODE)
+		new RoleBuilder(ADMIN_ROLE, "Admin", PRODUCT_CODE)
 				.setCapabilityMap(capabilities)
-				.addCapability(ADMIN).view(ALL).add(ALL).edit(ALL).build()
+				.setRoleRedirect(QUE_TABLE_PERSON)
+				.addCapability(ADMIN).view(ALL).add(ALL).edit(ALL).delete(ALL)
+				.addNode(CapabilityMode.ADD, ALL, false).build()
+				.addCapability(BALI_PERSON).view(ALL).add(ALL).edit(ALL).delete(ALL).build()
+				.addCapability(PERSON).view(ALL).add(ALL).edit(ALL).delete(ALL).build()
 
-				// Views addView(capabilityCode) == addCapability(capabilityCode, VIEW)
+				.addCapability(COMPANY).view(ALL).build()
 				.build();
 
 		// Set TestUser
