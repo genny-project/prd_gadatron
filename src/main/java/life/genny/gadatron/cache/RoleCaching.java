@@ -84,6 +84,11 @@ public class RoleCaching {
 	private Map<String, Attribute> loadCapabilityAttributes() {
 		String[][] attribData = {
 				{ ADMIN, "Manipulate Admin" },
+				{ PERSON, "Manipulate Person" },
+				{ BALI_PERSON, "Manipulate Bali Person" },
+				{ DASHBOARD, "Dashboard View" },
+				{ COMPANY, "Manipulate Company" },
+				{ ACTION_APPLY, "Use Apply Action" }
 		};
 
 		return capMan.getCapabilityAttributeMap(PRODUCT_CODE, attribData);
