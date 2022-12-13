@@ -10,6 +10,7 @@ import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.kafka.KafkaTopic;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.*;
@@ -276,7 +277,7 @@ public class WayanService {
         log.info("Entity Definition is "+entityDefinition);
         if (content != null && !content.isEmpty()) {
             final String name = content;
-            BaseEntity personDef = beUtils.getBaseEntity(entityDefinition);
+            Definition personDef = beUtils.getDefinition(entityDefinition);
             BaseEntity person = beUtils.create(personDef, name);
             if (entityDefinition.equalsIgnoreCase("DEF_PERSON")) {
                 String[] names = name.split(" ");
@@ -313,7 +314,7 @@ public class WayanService {
             if (content.containsKey("ATT_PRI_FIRSTNAME")) {
                 name = content.get("ATT_PRI_FIRSTNAME");
             }
-            BaseEntity personDef = beUtils.getBaseEntity("DEF_PERSON");
+            Definition personDef = beUtils.getDefinition("DEF_PERSON");
             String uuid = personDef.getValue("PRI_PREFIX").get()+"_"+(content.containsKey("PRI_UUID")? content.get("PRI_UUID"): UUID.randomUUID().toString());
             BaseEntity person = beUtils.create(personDef, name, uuid);
 

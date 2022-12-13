@@ -3,6 +3,7 @@ package life.genny.gadatron.service;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
@@ -77,7 +78,7 @@ public class IrvanService {
         public String createPersonIrvan(String defcode, String firstName) {
                 log.info(defcode);
                 log.info(firstName);
-                BaseEntity defBE = beUtils.getBaseEntity(defcode);
+                Definition defBE = beUtils.getDefinition(defcode);
                 BaseEntity be = beUtils.create(defBE, firstName);
 
                 be = beUtils.addValue(be, "PRI_FIRSTNAME", firstName);

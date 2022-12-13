@@ -1,18 +1,16 @@
 package life.genny.gadatron.service;
 
-import java.lang.invoke.MethodHandles;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import org.jboss.logging.Logger;
-
-import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.lang.invoke.MethodHandles;
 
 @ApplicationScoped
 public class AmrizalService {
@@ -29,7 +27,7 @@ public class AmrizalService {
     UserToken userToken;
 
     public String createPersonAmrizal(String def, String value) {
-        BaseEntity beDefinition = beUtils.getBaseEntity(def);
+        Definition beDefinition = beUtils.getDefinition(def);
 
         BaseEntity person = beUtils.create(beDefinition);
 
@@ -51,7 +49,7 @@ public class AmrizalService {
 
     public void createQuestionGroup(String def, String value) {
         String code = "QQQ_QUESTION_GROUP";
-        BaseEntity beDef = beUtils.getBaseEntity(code);
+        Definition beDef = beUtils.getDefinition(code);
 
         BaseEntity qg = beUtils.create(beDef);
 

@@ -4,6 +4,7 @@ import io.quarkus.runtime.StartupEvent;
 import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
@@ -81,7 +82,7 @@ public class BalService {
                 log.info("Creating new baseentity: " + defCode + "be_name:" + beName);
 
                 // Get DEF
-                BaseEntity defPerson = beUtils.getBaseEntity(defCode);
+                Definition defPerson = beUtils.getDefinition(defCode);
                 // Create Person BE based on DEF_PERSON
                 BaseEntity newPerson = beUtils.create(defPerson, beName);
 
