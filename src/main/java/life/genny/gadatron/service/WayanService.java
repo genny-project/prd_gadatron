@@ -34,7 +34,7 @@ public class WayanService {
 
     static Jsonb jsonb = JsonbBuilder.create();
 
-    @ConfigProperty(name = "quarkus.application.name", defaultValue = "gadatron")
+    @ConfigProperty(name = "quarkus.application.name")
     public String productCode;
 
     @Inject
@@ -55,7 +55,7 @@ public class WayanService {
      * @param ev The startup event
      */
     void onStart(@Observes StartupEvent ev) {
-        log.info("Wayan service is starting");
+        log.info("Wayan service is starting, product code: "+productCode);
 //        setupQuestionForm();
 //        setupSimpleUserDetailsForm();
     }

@@ -346,18 +346,20 @@ public class Events {
 			}
 		}
 
-		if (code.startsWith("QUE_WAYAN_")) {
+		if (code.startsWith("QUE_WAYAN_") || code.equals("QUE_USER_PROFILE_VIEW")) {
 			String sourceCode = msg.getData().getSourceCode();
 			if (sourceCode == null || sourceCode.isEmpty()) return;
 			String nextQuestionCode = switch (code) {
 				case "QUE_WAYAN_CREATEQUESTION_VIEW" -> "QUE_WAYAN_CREATEQUESTION_GRP";
 				case "QUE_WAYAN_CREATEBALIPERSON_VIEW" -> "QUE_BALI_PERSON_GRP";
+				case "QUE_USER_PROFILE_VIEW" -> "QUE_USER_PROFILE_GRP";
 				default -> "";
 			};
 
 			String entityCode = switch (code) {
 				case "QUE_WAYAN_CREATEQUESTION_VIEW" -> "DEF_QUESTION";
 				case "QUE_WAYAN_CREATEBALIPERSON_VIEW" -> "DEF_BALI_PERSON";
+				case "QUE_USER_PROFILE_VIEW" -> "DEF_PERSON";
 				default -> "";
 			};
 
