@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import life.genny.qwandaq.entity.Definition;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
@@ -22,7 +23,7 @@ public class TimerEventCaching {
 
 	static final Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
-	static BaseEntity timerEventDef = null;
+	static Definition timerEventDef = null;
 
 	static final String QUE_ADD_APPLICATION_GRP = "QUE_ADD_APPLICATION_GRP";
 
@@ -49,7 +50,7 @@ public class TimerEventCaching {
 	public void init(final String productCode) {
 		log.info("=========================construct TimerEvents =========================");
 
-		timerEventDef = beUtils.getBaseEntityByCode(productCode, "DEF_TIMER_EVENT");
+		timerEventDef = beUtils.getDefinition("DEF_TIMER_EVENT");
 
 		BaseEntity personDef = beUtils.getBaseEntityByCode(productCode, "DEF_PERSON");
 

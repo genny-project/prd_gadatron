@@ -6,6 +6,7 @@ import life.genny.qwandaq.QuestionQuestion;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.DatabaseUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
@@ -52,7 +53,7 @@ public class GarService {
         log.info("Firstname: " + firstname);
         String lastname = "" + new Date().getTime();
 
-        BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, defCode);
+        Definition defBE = beUtils.getDefinition(defCode);
         BaseEntity be = beUtils.create(defBE, firstname + " " + lastname);
         log.info("BE: " + be);
 
@@ -73,7 +74,7 @@ public class GarService {
         if (be == null) {
             String firstname = "Michael";
             String lastname = "Brown";
-            BaseEntity defBE = beUtils.getBaseEntityOrNull(productCode, "DEF_PERSON");
+            Definition defBE = beUtils.getDefinition("DEF_PERSON");
             be = beUtils.create(defBE, firstname + " " + lastname, personEntityCode);
             log.info("BE: " + be);
 
