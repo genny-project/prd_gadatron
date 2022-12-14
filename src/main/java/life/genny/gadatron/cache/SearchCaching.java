@@ -10,6 +10,8 @@ import life.genny.qwandaq.EEntityStatus;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.datatype.DataType;
+import life.genny.qwandaq.datatype.capability.core.CapabilityBuilder;
+import life.genny.qwandaq.datatype.capability.core.node.PermissionMode;
 import life.genny.qwandaq.models.GennySettings;
 import org.jboss.logging.Logger;
 
@@ -20,9 +22,20 @@ import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.entity.search.trait.Ord;
 import life.genny.qwandaq.entity.search.trait.Sort;
+import life.genny.qwandaq.entity.search.trait.Trait;
 import life.genny.qwandaq.utils.CacheUtils;
 
 import javax.enterprise.context.ApplicationScoped;
+
+import static life.genny.qwandaq.attribute.Attribute.LNK_DEF;
+import static life.genny.qwandaq.attribute.Attribute.PRI_IMAGE_URL;
+import static life.genny.qwandaq.attribute.Attribute.PRI_NAME;
+import static life.genny.qwandaq.attribute.Attribute.PRI_EMAIL;
+import static life.genny.qwandaq.attribute.Attribute.PRI_MOBILE;
+import static life.genny.qwandaq.attribute.Attribute.PRI_CREATED;
+import static life.genny.qwandaq.attribute.Attribute.PRI_UPDATED;
+
+import static life.genny.gadatron.constants.GadatronConstants.*;
 
 @ApplicationScoped
 public class SearchCaching {
@@ -53,6 +66,8 @@ public class SearchCaching {
 	public static final String SBE_TABLE_HOST_COMPANIES = "SBE_TABLE_HOST_COMPANIES";
 	public static final String SBE_TABLE_INTERNSHIPS = "SBE_TABLE_INTERNSHIPS";
 	public static final String SBE_TABLE_LOGBOOK = "SBE_TABLE_LOGBOOK";
+	public static final String SBE_TABLE_PERSON = "SBE_TABLE_PERSON";
+	public static final String SBE_TABLE_BALI_PERSON = "SBE_TABLE_BALI_PERSON";
 
 	// contacts
 	public static final String SBE_TABLE_AGENTS = "SBE_TABLE_AGENTS";
@@ -70,6 +85,12 @@ public class SearchCaching {
 	public static final String SBE_OFFERED_APPLICATIONS = "SBE_OFFERED_APPLICATIONS";
 	public static final String SBE_PLACED_APPLICATIONS = "SBE_PLACED_APPLICATIONS";
 	public static final String SBE_SHORTLISTED_APPLICATIONS = "SBE_SHORTLISTED_APPLICATIONS";
+
+	public static final String VIEW = "VIEW";
+	public static final String EDIT = "EDIT";
+	public static final String APPLY = "APPLY";
+	public static final String CREATE = "CREATE";
+	public static final String DELETE = "DELETE";
 
 	public void saveToCache(String realm) {
 		log.info("=========================saveToCache=========================");
@@ -205,6 +226,28 @@ public class SearchCaching {
 				.add(new Action("PRI_EVENT_VIEW", "View Profile"))
 				.setPageStart(0).setPageSize(GennySettings.defaultBucketSize()));
 
+		cacheSearch(
+				new SearchEntity(SBE_TABLE_PERSON, "People")
+						.add(new Filter(LNK_DEF, Operator.CONTAINS, DEF_PERSON))
+						// View own application only
+						// .add(Trait.decorator(new Filter(LNK_PERSON, Operator.CONTAINS, "USER_CODE"))
+						// .addCapabilityRequirement(
+						// new CapabilityBuilder(PERSON).view(PermissionMode.SELF)
+						// .view(PermissionMode.ALL, true)
+						// .buildCap())
+						// .build())
+						// .add(new AssociatedColumn(LNK_STAFF, PRI_POSITION, "Staff Position"))
+						.add(new Column("PRI_IMAGE_URL", "Profile Picture"))
+						.add(new Column("PRI_NAME", "Name"))
+						.add(new Column("PRI_CREATED", "Date Created"))
+						.add(new Column("PRI_STATUS", "Status"))
+						.add(new AssociatedColumn("LNK_COMPANY", "PRI_NAME", "Company"))
+						.add(new Column("PRI_EMAIL", "Email"))
+						.add(new Column("PRI_MOBILE", "Mobile"))
+						.add(new Action(VIEW, "View"))
+						.setPageSize(20) // TODO, use default page size
+						.setPageStart(0));
+
 		List<SearchEntity> entities = new ArrayList<>();
 
 		// sidebar
@@ -251,7 +294,6 @@ public class SearchCaching {
 		cacheDropdown("DEF_COMPANY",
 				new SearchEntity("SBE_SER_LNK_NUMBER_STAFF", "Number of Staffs Dropdown")
 						.setLinkValue("NO_OF_STAFF"));
-
 
 		// DEF_HOST_CPY_REP
 		cacheDropdown("DEF_HOST_CPY_REP",
@@ -302,7 +344,6 @@ public class SearchCaching {
 		cacheDropdown("DEF_INTERNSHIP",
 				new SearchEntity("SBE_SER_LNK_SOFTWARE", "Software Dropdown")
 						.setLinkValue("SOFTWARE"));
-
 
 		cacheDropdown("DEF_APPLICATION",
 				new SearchEntity("SBE_SER_LNK_HOST_COMPANY", "Host Company Dropdown")
@@ -602,7 +643,7 @@ public class SearchCaching {
 				/* Filterable Columns */
 				.addFilterableColumn("TEXT_PRI_NAME", "Name")
 				.addFilterableColumn("YES_NO_PRI_DJP_AGREE", "DJP Agree")
-//				.addFilterableColumn("PRI_TEXT_INDUSTRY", "Company Industry")
+				// .addFilterableColumn("PRI_TEXT_INDUSTRY", "Company Industry")
 				.addFilterableColumn("TEXT_PRI_VALIDATION", "Validation")
 				.addFilterableColumn("TEXT_PRI_STATUS", "Status")
 				.addFilterableColumn("DATETIME_PRI_CREATED_DATE", "Date Created")
@@ -668,7 +709,7 @@ public class SearchCaching {
 				.addFilterableColumn("TEXT_PRI_ASSOC_HC", "Host Company")
 				.addFilterableColumn("SELECT_PRI_COUNTRY_FIELD_PRI_ADDRESS_COUNTRY", "Country")
 				.addFilterableColumn("DATETIME_PRI_CREATED", "Date Created")
-//				.addFilterableColumn("SELECT_PRI_INTERNSHIP_TYPE", "Internship Type")
+				// .addFilterableColumn("SELECT_PRI_INTERNSHIP_TYPE", "Internship Type")
 
 				/* Wildcard blacklist */
 				/* .addBlacklist("PRI_ROLES_AND_RESPONSIBILITIES") */
