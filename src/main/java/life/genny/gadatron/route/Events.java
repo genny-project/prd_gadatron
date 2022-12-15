@@ -29,8 +29,6 @@ public class Events {
 
 	static final Logger log = Logger.getLogger(MethodHandles.lookup().lookupClass());
 
-	private static final String DEF_BALI = "DEF_BALI_PERSON";
-
 	@Inject
 	UserToken userToken;
 
@@ -144,6 +142,29 @@ public class Events {
 			} else {
 				log.error("kogitoUtils is Null");
 			}
+		}
+
+		if (code.startsWith("QUE_DATA_FAKER_")) {
+			String sourceCode = msg.getData().getSourceCode();
+				if (sourceCode == null || sourceCode.isEmpty())
+					return;
+
+			if (code.contains("VIEW")) {
+				String questionCode = "QUE_DATA_FAKER_FORM_GRP";
+				String entityCode = "DEF_DATA_FAKER_JOBS";
+				JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", questionCode)
+					.add("sourceCode", sourceCode)
+					.add("targetCode", msg.getData().getTargetCode())
+					.add("entityCode", entityCode);
+
+			payloadBuilder.add("content", "Simple Question");
+
+			JsonObject payload = payloadBuilder.build();
+			kogitoUtils.triggerWorkflow(SELF, "testDataGenerator", payload);
+			} else log.warn("Code is invalid: " + code);
+		
+			return;
 		}
 	}
 
