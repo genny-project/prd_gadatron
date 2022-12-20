@@ -51,7 +51,7 @@ public class Events {
 		MessageData data = msg.getData();
 		String code = data.getCode();
 
-		log.info("message received: code: "+code);
+		log.info("message received: code: " + code);
 
 		if (userToken == null) {
 			log.error("userToken  is null - possible cause is no user logged in");
@@ -141,6 +141,34 @@ public class Events {
 
 			if (kogitoUtils != null) {
 				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+			} else {
+				log.error("kogitoUtils is Null");
+			}
+		}
+
+		// test parent Call
+		if (code.startsWith("TESTQ2_QUE_")) {
+			log.info("Calling parent group Group ..." + msg.getData().getCode() + " msg=" + msg);
+			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("questionCode", msg.getData().getCode().substring("TESTQ2_".length()));
+
+			String content = msg.getData().getContent();
+
+			if (userToken != null) {
+				if (userToken.getUserCode() != null) {
+					payloadBuilder.add("sourceCode", userToken.getUserCode());
+					payloadBuilder.add("userCode", userToken.getUserCode());
+				}
+			} else {
+				log.error("userToken is Null");
+			}
+
+			JsonObject payload = payloadBuilder.build();
+
+			log.info("Payload = " + payload.toString());
+
+			if (kogitoUtils != null) {
+				kogitoUtils.triggerWorkflow(SELF, "baliPersonLC", payload);
 			} else {
 				log.error("kogitoUtils is Null");
 			}
