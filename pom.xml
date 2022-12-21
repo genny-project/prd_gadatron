@@ -204,7 +204,7 @@
             <phase>pre-clean</phase>
             <configuration>
               <tasks>
-                <copy todir="${basedir}/src/main/resources/life/genny/shared">
+                <copy todir="${basedir}/src/main/resources/life/genny/application">
                   <fileset dir="../../gennyq/kogitoq/kogito-common/src/main/shared">
                     <include name="*"/>
                   </fileset>
