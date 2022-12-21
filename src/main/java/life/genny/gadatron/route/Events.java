@@ -9,6 +9,7 @@ import life.genny.qwandaq.message.QEventMessage;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,7 +19,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.lang.invoke.MethodHandles;
 
-import static life.genny.gadatron.constants.GadatronConstants.PRODUCT_CODE;
 import static life.genny.kogito.common.utils.KogitoUtils.UseService.SELF;
 
 /**
@@ -43,6 +43,9 @@ public class Events {
 	@Inject
 	BaseEntityUtils beUtils;
 
+	@ConfigProperty(name = "quarkus.application.name")
+	String productCode;
+
 	/**
 	 * @param msg
 	 */
@@ -63,6 +66,7 @@ public class Events {
 		// add person
 		if ("QUE_ADD_PERSON".equals(code)) {
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("productCode", productCode)
 					.add("questionCode", "QUE_PERSON_GRP")
 					.add("targetCode", "PER_940F6070-356B-4AF0-99F5-663E2CB5AAA4");
 
@@ -109,6 +113,7 @@ public class Events {
 		if (code.startsWith("TESTQ_QUE_")) {
 			log.info("Displaying Test Question Group ..." + msg.getData().getCode() + " msg=" + msg);
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("productCode", productCode)
 					.add("questionCode", msg.getData().getCode().substring("TESTQ_".length()))
 					.add("entityCode", msg.getData().getTargetCode())
 					.add("targetCode", msg.getData().getTargetCode());
@@ -120,10 +125,10 @@ public class Events {
 				log.info("Content = " + content);
 				/* Load the LNK_DOT */
 
-				BaseEntity target = beUtils.getBaseEntityByCode(PRODUCT_CODE, msg.getData().getTargetCode());
+				BaseEntity target = beUtils.getBaseEntityByCode(productCode, msg.getData().getTargetCode());
 				Attribute lnkDot = qwandaUtils.getAttribute("LNK_DOT");
 				target.addAnswer(new Answer(target, target, lnkDot, "[\"" + content + "\"]"));
-				beUtils.updateBaseEntity(PRODUCT_CODE, target);
+				beUtils.updateBaseEntity(productCode, target);
 			}
 
 			if (userToken != null) {
@@ -140,7 +145,7 @@ public class Events {
 			log.info("Payload = " + payload.toString());
 
 			if (kogitoUtils != null) {
-				kogitoUtils.triggerWorkflow(SELF, "testQuestionGT2", payload);
+				kogitoUtils.triggerWorkflow(SELF, "testQuestion", payload);
 			} else {
 				log.error("kogitoUtils is Null");
 			}
@@ -150,6 +155,7 @@ public class Events {
 		if (code.startsWith("TESTQ2_QUE_")) {
 			log.info("Calling parent group Group ..." + msg.getData().getCode() + " msg=" + msg);
 			JsonObjectBuilder payloadBuilder = Json.createObjectBuilder()
+					.add("productCode", productCode)
 					.add("questionCode", msg.getData().getCode().substring("TESTQ2_".length()));
 
 			String content = msg.getData().getContent();

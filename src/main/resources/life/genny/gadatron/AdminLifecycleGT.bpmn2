@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_2NqocEBiEDuIEr1EGEsRiA" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_HWfY4WMFEDu_N7mqIhFoaQ" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
   <bpmn2:itemDefinition id="_entityCodeItem" structureRef="String"/>
   <bpmn2:itemDefinition id="_questionCodeItem" structureRef="String"/>
   <bpmn2:itemDefinition id="_sourceCodeItem" structureRef="String"/>
@@ -23,10 +23,10 @@
   <bpmn2:interface id="_7D9AF4E4-B83C-47D7-8160-45BCCE346249_ServiceInterface" name="life.genny.kogito.common.service.NavigationService" implementationRef="life.genny.kogito.common.service.NavigationService">
     <bpmn2:operation id="_7D9AF4E4-B83C-47D7-8160-45BCCE346249_ServiceOperation" name="redirectByQuestionCode" implementationRef="redirectByQuestionCode"/>
   </bpmn2:interface>
-  <bpmn2:collaboration id="_B6092E35-5B97-4A0E-983E-E09FF49B1BCA" name="Default Collaboration">
-    <bpmn2:participant id="_D00F206F-CFB4-4EFC-9A26-6A8E6F715440" name="Pool Participant" processRef="adminLifecycleGT"/>
+  <bpmn2:collaboration id="_F1C3549B-3CA3-4215-962C-2F4201FF2754" name="Default Collaboration">
+    <bpmn2:participant id="_9FA07874-1C15-4358-8994-BA79A29F0E2F" name="Pool Participant" processRef="adminLifecycleGT"/>
   </bpmn2:collaboration>
-  <bpmn2:process id="adminLifecycleGT" drools:packageName="life.genny.gadatron.application" drools:version="1.0" drools:adHoc="false" name="AdminLifecyle" isExecutable="true" processType="Public">
+  <bpmn2:process id="adminLifecycleGT" drools:packageName="life.genny.application" drools:version="1.0" drools:adHoc="false" name="AdminLifecyle" isExecutable="true" processType="Public">
     <bpmn2:property id="entityCode" itemSubjectRef="_entityCodeItem" name="entityCode">
       <bpmn2:extensionElements>
         <drools:metaData name="customTags">
@@ -114,7 +114,7 @@
       <bpmn2:outgoing>_659D2B5F-F0F0-4D0A-BA32-47CB2CA2899C</bpmn2:outgoing>
       <bpmn2:script>System.out.println("Starting Admin lifecycle");</bpmn2:script>
     </bpmn2:scriptTask>
-    <bpmn2:callActivity id="_233E31A8-0F28-4942-B35A-10107E7D9557" drools:independent="true" drools:waitForCompletion="true" name="Admin Details" calledElement="callProcessQuestionsGT">
+    <bpmn2:callActivity id="_233E31A8-0F28-4942-B35A-10107E7D9557" drools:independent="true" drools:waitForCompletion="true" name="Admin Details" calledElement="callProcessQuestions">
       <bpmn2:extensionElements>
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[Admin Details]]></drools:metaValue>
@@ -293,7 +293,7 @@
         </bpsim:Scenario>
       </bpsim:BPSimData>
     </bpmn2:extensionElements>
-    <bpmn2:source>_2NqocEBiEDuIEr1EGEsRiA</bpmn2:source>
-    <bpmn2:target>_2NqocEBiEDuIEr1EGEsRiA</bpmn2:target>
+    <bpmn2:source>_HWfY4WMFEDu_N7mqIhFoaQ</bpmn2:source>
+    <bpmn2:target>_HWfY4WMFEDu_N7mqIhFoaQ</bpmn2:target>
   </bpmn2:relationship>
 </bpmn2:definitions>
