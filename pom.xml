@@ -196,6 +196,27 @@
         <artifactId>kogito-maven-plugin</artifactId>
         <version>${kogito.version}</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>pre-clean</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${basedir}/src/main/resources/life/genny/application">
+                  <fileset dir="../../gennyq/kogitoq/kogito-common/src/main/shared">
+                    <include name="*"/>
+                  </fileset>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <profiles>
